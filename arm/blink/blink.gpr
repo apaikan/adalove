@@ -1,0 +1,45 @@
+Project Blink is
+   ----------------
+   -- Attributes --
+   ----------------
+   for Languages use ("c", "Ada");
+   for Source_Dirs use ("./include", "./src", "./build");
+   for Main use ("main.adb");
+   for Object_Dir use "./build";
+   for Exec_Dir use "./";
+
+   --------------
+   -- Packages --
+   --------------
+    Prefix := external ("PREFIX", "");
+    package Ide is
+      for Compiler_Command ("Ada") use Prefix & "arm-none-eabi-gnat";
+      for Compiler_Command ("c") use Prefix & "arm-none-eabi-gcc";
+    end Ide;
+
+   package Naming is
+      for Specification_Suffix ("c") use ".h";
+      for Implementation_Suffix ("c") use ".c";
+   end Naming;
+
+   package Compiler is
+      for Default_Switches ("Ada") use ("-O2");
+      for Default_Switches ("c") use ("-O2");
+   end Compiler;
+
+   package Builder is
+        for Executable ("main") use "main";
+        for Executable_Suffix use ".out";
+        for Default_Switches ("Ada") use ("--RTS=rts-raven", "-g",
+                                          "-largs", 
+                                          "-T/home/apaikan/Install/ADA/arm-ada/toolchain/ravenscar/kernel_samba.ld");
+   end Builder;
+
+   package Linker is
+      --for Switches ("main.adb") use ("-g");
+        for Default_Switches ("Ada") use ("-lstm32");
+        for Default_Switches ("c") use ("-lstm32");
+   end Linker;
+
+end Blink;
+

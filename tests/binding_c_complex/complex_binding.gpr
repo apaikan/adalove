@@ -16,7 +16,7 @@ Project Complex_Binding is
    ----------------
    for Languages use ("c", "Ada");
 
-   for Source_Dirs use ("./include", "./src", "./src_c", "./build");
+   for Source_Dirs use ("./src", "./src_c", "./build");
    --  The list of directories where the source files are to be looked
    --  for. Once again, we can specify any number of these.
 
@@ -57,6 +57,12 @@ Project Complex_Binding is
         for Default_Switches ("Ada") use ("-g");
         for Default_Switches ("c") use ("-g");
    end Builder;
+
+   package Linker is
+      --for Switches ("main.adb") use ("-g");
+        for Default_Switches ("Ada") use ("-lpthread", "-ldl");
+        for Default_Switches ("c") use ("-lpthread", "-ldl");
+   end Linker;
 
 end Complex_Binding;
 

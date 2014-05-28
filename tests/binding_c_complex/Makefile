@@ -15,7 +15,7 @@ all: dump_ada
 	$(PREFIX)gprbuild -P complex_binding.gpr
 
 dump_ada: 
-	(cd ./build; $(PREFIX)gcc -c -fdump-ada-spec ../src_c/random_num.h)
+	(cd ./build; $(PREFIX)gcc -c -fdump-ada-spec ../src_c/sqlite3.h)
 
 clean:
 	$(PREFIX)gprclean -P complex_binding.gpr

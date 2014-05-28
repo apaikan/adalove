@@ -16,7 +16,7 @@ Project Simple_Binding is
    ----------------
    for Languages use ("C++", "Ada");
 
-   for Source_Dirs use ("./include", "./src", "./cpp");
+   for Source_Dirs use ("./src", "./cpp");
    --  The list of directories where the source files are to be looked
    --  for. Once again, we can specify any number of these.
 

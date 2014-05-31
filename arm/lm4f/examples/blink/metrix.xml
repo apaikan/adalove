@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<global>
+   <file name="/home/apaikan/Install/ADA/adalove/arm/lm4f/blink/src/mytasks.adb">
+      <unit name="MyTasks" kind="package body" line="8" col="1">
+         <unit name="SimpleTask" kind="task body" line="11" col="5">
+            <metric name="statement_complexity">1</metric>
+            <metric name="expression_complexity">0</metric>
+            <metric name="cyclomatic_complexity">1</metric>
+            <metric name="essential_complexity">1</metric>
+            <metric name="max_loop_nesting">1</metric>
+            <metric name="extra_exit_points">0</metric>
+         </unit>
+      </unit>
+      <metric name="statement_complexity">1.00</metric>
+      <metric name="expression_complexity">0.00</metric>
+      <metric name="essential_complexity">1.00</metric>
+      <metric name="cyclomatic_complexity">1.00</metric>
+      <metric name="max_loop_nesting">1.00</metric>
+   </file>
+   <metric name="average_complexity">1.00</metric>
+</global>

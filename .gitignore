@@ -2,5 +2,6 @@ obj
 build
 *.swo
 *.swp
-
+*.bin
+*.out
 

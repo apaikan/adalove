@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to build the ravenscar run-time for STM32.
+# Script to build the ravenscar run-time for LM4F120.
 # Access to GNAT and ZFP-support sources are required.
 
 set -e
@@ -38,6 +38,7 @@ mkdir $objdir/adainclude
 mkdir $objdir/adalib
 
 # Build list of sources.
+echo $gnatsrc
 make -f $gnatsrc/Makefile.hie RTS=ravenscar-sfp TARGET=none-elf \
  GNAT_SRC_DIR=$gnatsrc show-sources > ravenscar.src
 

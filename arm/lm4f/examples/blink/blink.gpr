@@ -3,7 +3,7 @@ Project Blink is
    -- Attributes --
    ----------------
    for Languages use ("c", "Ada");
-   for Source_Dirs use ("./include", "./src", "./build");
+   for Source_Dirs use ("../../liblm4f120", "./include", "./src", "./build");
    for Main use ("main.adb");
    for Object_Dir use "./build";
    for Exec_Dir use "./";

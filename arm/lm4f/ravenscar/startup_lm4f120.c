@@ -222,7 +222,8 @@ void (* const g_pfnVectors[])(void) =
 // for the "data" segment resides immediately following the "text" segment.
 //
 //*****************************************************************************
-extern unsigned long _etext;
+//extern unsigned long _etext;
+extern unsigned long _sidata;
 extern unsigned long _sdata;
 extern unsigned long _edata;
 extern unsigned long _sbss;
@@ -240,12 +241,35 @@ extern unsigned long _ebss;
 //*****************************************************************************
 void ResetISR(void)
 {
-    unsigned long *pulSrc, *pulDest;
+    /* Copy the data segment initializers from flash to SRAM */  
+    __asm("  movs  r1, #0\n"
+          "  b  LoopCopyDataInit\n"
+          "CopyDataInit:\n"
+          "  ldr  r3, =_sidata\n"
+          "  ldr  r3, [r3, r1]\n"
+          "  str  r3, [r0, r1]\n"
+          "  adds  r1, r1, #4\n"
+          "LoopCopyDataInit:\n"
+          "  ldr  r0, =_sdata\n"
+          "  ldr  r3, =_edata\n"
+          "  adds  r2, r0, r1\n"
+          "  cmp  r2, r3\n"
+          "  bcc  CopyDataInit\n"
+          "  ldr  r2, =_sbss\n"
+          "  b  LoopFillZerobss");
 
-    //
-    // Copy the data segment initializers from flash to SRAM.
-    //
-    pulSrc = &_etext;
+    /* Zero fill the bss segment. */              
+    __asm(  "FillZerobss:\n"
+            "  movs  r3, #0\n"
+            "  str  r3, [r2], #4\n"
+            "LoopFillZerobss:\n"
+            "  ldr  r3, = _ebss\n"
+            "  cmp  r2, r3\n"
+            "  bcc  FillZerobss");
+  
+    /*
+   unsigned long *pulSrc, *pulDest;
+    pulSrc = &_sidata;
     for(pulDest = &_sdata; pulDest < &_edata; )
     {
         *pulDest++ = *pulSrc++;
@@ -264,6 +288,7 @@ void ResetISR(void)
           "        strlt   r2, [r0], #4\n"
           "        blt     zero_loop");
 
+    */
     //
     // Enable the floating-point unit.  This must be done here to handle the
     // case where main() uses floating-point and the function prologue saves

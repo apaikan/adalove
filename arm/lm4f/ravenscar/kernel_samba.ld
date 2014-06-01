@@ -25,7 +25,7 @@
 ENTRY(ResetISR)
 
 /* Highest address of the user mode stack */
-_estack = 0x20008000;    /* end of 128K RAM on AHB bus*/
+_estack = 0x20008000;    /* end of 32K RAM on AHB bus*/
 
 
 /* Generate a link error if heap and stack don't fit into RAM */
@@ -36,16 +36,25 @@ _Min_Stack_Size = 0x400; /* required amount of stack 400 */
 MEMORY
 {
     FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 0x00040000
-    SRAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
+    RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00008000
     MEMORY_B1 (rw) : ORIGIN = 0x60000000 , LENGTH = 0x00000000
 }
 
 SECTIONS
-{
+{ 
+
+  /* The startup code goes first into FLASH */
+  .isr_vector :
+  {
+    . = ALIGN(4);
+    KEEP(*(.isr_vector)) /* Startup code */
+    . = ALIGN(4);
+  } >FLASH
+
     .text :
     {
-      _text = .;
-      KEEP(*(.isr_vector))
+     /* _text = .; */
+     . = ALIGN(4);
       *(.text)           /* .text sections (code) */
       *(.text*)          /* .text* sections (code) */
       *(.rodata)         /* .rodata sections (constants, strings, etc.) */
@@ -69,13 +78,14 @@ SECTIONS
       __exidx_end = .;
     } >FLASH
 
+/*  .ARM.attributes : { *(.ARM.attributes) } > FLASH */
+
   .preinit_array     :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
   } >FLASH
-
   .init_array :
   {
     PROVIDE_HIDDEN (__init_array_start = .);
@@ -83,7 +93,6 @@ SECTIONS
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
   } >FLASH
-
   .fini_array :
   {
     PROVIDE_HIDDEN (__fini_array_start = .);
@@ -92,17 +101,20 @@ SECTIONS
     PROVIDE_HIDDEN (__fini_array_end = .);
   } >FLASH
 
-
     _sidata = .;
     .data : AT( _sidata )
     {
+        . = ALIGN(4);
         _sdata = .;
-        *(vtable)
+/*        *(vtable) */
         *(.data)
         *(.data*)
-        _edata = .;
-    } > SRAM
 
+        . = ALIGN(4);
+        _edata = .;
+    } > RAM
+
+    . = ALIGN(4);
     .bss :
     {
         _sbss = .;
@@ -110,9 +122,11 @@ SECTIONS
         *(.bss)
         *(.bss*)
         *(COMMON)
+
+        . = ALIGN(4);
         _ebss = .;
         __bss_end__ = _ebss;
-    } > SRAM
+    } > RAM
 
   /* User_heap_stack section, used to check that there is enough RAM left */
   ._user_heap_stack :
@@ -125,9 +139,10 @@ SECTIONS
     . = . + _Min_Heap_Size;
     . = . + _Min_Stack_Size;
     . = ALIGN(4);
+
     __stack_top = .;
 	__system_stack_top__ = . ;
-  } >SRAM
+  } >RAM
 
   /* MEMORY_bank1 section, code must be located here explicitly            */
   /* Example: extern int foo(void) __attribute__ ((section (".mb1text"))); */
@@ -148,5 +163,6 @@ SECTIONS
     libgcc.a ( * )
   }
   
+  .ARM.attributes 0 : { *(.ARM.attributes) }
 }
 

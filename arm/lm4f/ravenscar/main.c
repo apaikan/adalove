@@ -127,8 +127,7 @@ void _NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority) {
 */
 
 uint32_t _NVIC_GetPriority(IRQn_Type IRQn) {
-    //return 16 - ROM_IntPriorityGet(IRQn);
-    return ROM_IntPriorityGet(IRQn);
+    return 16 - ROM_IntPriorityGet(IRQn);
 }
 
 void data_abort_pc (void)

@@ -1,7 +1,7 @@
 
 package MyTasks is
     task SimpleTask is
-        --pragma Priority (10);
+        pragma Priority (1);
     end SimpleTask;
 end MyTasks;
 

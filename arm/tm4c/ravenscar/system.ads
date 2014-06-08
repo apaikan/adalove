@@ -116,14 +116,20 @@ package System is
 
    --  Priority-related Declarations (RM D.1)
 
-   Max_Priority           : constant Positive := 239;
-   Max_Interrupt_Priority : constant Positive := 255;
+   Count_Int_Priority : constant Positive := 32;
+   Max_Int_Priority   : constant Positive := 255;
 
-   subtype Any_Priority       is Integer      range   0 .. 255;
-   subtype Priority           is Any_Priority range   0 .. 239;
-   subtype Interrupt_Priority is Any_Priority range 240 .. 255;
+   subtype Any_Priority is Integer
+           range   0 .. Max_Int_Priority;
 
-   Default_Priority : constant Priority := 120;
+   subtype Priority is Any_Priority
+           range 0 .. Max_Int_Priority - Count_Int_Priority;  -- (0-223)
+
+   subtype Interrupt_Priority is Any_Priority
+           range Priority'Last + 1 .. Max_Int_Priority; -- (224-255)
+
+   Default_Priority : constant Priority :=
+            (Priority'Last - Priority'First) / 2 + 1; -- (112)
 
 private
 

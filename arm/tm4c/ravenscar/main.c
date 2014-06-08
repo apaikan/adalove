@@ -37,11 +37,12 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
+#include "inc/hw_ints.h"
 
-#define configKERNEL_INTERRUPT_PRIORITY 255
+#define MAX_INTERRUPT_PRIORITY      32     //we use only 32 level of interrupt priorities
 #define portNVIC_SYSPRI2			( ( volatile unsigned long * ) 0xe000ed20 )
-#define portNVIC_PENDSV_PRI			( ( ( unsigned long ) configKERNEL_INTERRUPT_PRIORITY ) << 16 )
-#define portNVIC_SYSTICK_PRI		( ( ( unsigned long ) configKERNEL_INTERRUPT_PRIORITY ) << 24 )
+#define portNVIC_PENDSV_PRI			( ( ( unsigned long ) MAX_INTERRUPT_PRIORITY-1 ) << 16 )
+#define portNVIC_SYSTICK_PRI		( ( ( unsigned long ) MAX_INTERRUPT_PRIORITY-1 ) << 24 )
 
 typedef unsigned long IRQn_Type;
 
@@ -116,23 +117,24 @@ void init_board()
     ROM_UARTConfigSetExpClk(UART0_BASE, ROM_SysCtlClockGet(), 115200,
                         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
                          UART_CONFIG_PAR_NONE));
+    //
+    // Enable the UART interrupt.
+    //
+    uint32_t prio =  ROM_IntPriorityGet(INT_UART0); 
+    ROM_IntPrioritySet(INT_UART0, 15);
+    prio =  ROM_IntPriorityGet(INT_UART0); 
+    ROM_IntEnable(INT_UART0);
+    ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
 }
 
 void setup_systick(int frequency) 
-{
-    //NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
-    // ROM_IntPrioritySet(14, 15);
-   
-    uint32_t prio =  ROM_IntPriorityGet(14); // pendsv
-    prio =  ROM_IntPriorityGet(15);          // systick
-
+{      
 	/* Make PendSV and SysTick the lowest priority interrupts. */
 	*(portNVIC_SYSPRI2) |= portNVIC_PENDSV_PRI;
 	*(portNVIC_SYSPRI2) |= portNVIC_SYSTICK_PRI;    
 
-    prio =  ROM_IntPriorityGet(14); // pendsv
+    uint32_t prio =  ROM_IntPriorityGet(14); // pendsv
     prio =  ROM_IntPriorityGet(15); // systick
-
 
     ROM_SysTickPeriodSet(ROM_SysCtlClockGet()/frequency-1);
     // Enable interrupts to the processor.
@@ -150,45 +152,14 @@ int get_current_interrupt()
   return ipsr.b.IPSR;
 }
 
-void context_switch() {
+void context_switch() 
+{
   *((uint32_t volatile *)0xE000ED04) = 0x10000000; // trigger PendSV
 }
 
-/*
-// Export some static inline function for Ada.
-void _NVIC_EnableIRQ(IRQn_Type IRQn) {
-  IntMasterEnable(  
-  NVIC_EnableIRQ(IRQn - 16);
-}
-
-void _NVIC_DisableIRQ(IRQn_Type IRQn) {
-  NVIC_DisableIRQ(IRQn - 16);
-}
-
-uint32_t _NVIC_GetPendingIRQ(IRQn_Type IRQn) {
-  return NVIC_GetPendingIRQ(IRQn - 16);
-}
-
-void _NVIC_SetPendingIRQ(IRQn_Type IRQn) {
-  NVIC_SetPendingIRQ(IRQn - 16);
-}
-
-void _NVIC_ClearPendingIRQ(IRQn_Type IRQn) {
-    NVIC_ClearPendingIRQ(IRQn - 16);
-}
-
-uint32_t _NVIC_GetActive(IRQn_Type IRQn) {
-    return NVIC_GetActive(IRQn - 16);
-}
-
-void _NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority) {
-    NVIC_SetPriority(IRQn - 16, 16 - priority);
-}
-
-*/
-
-uint32_t _NVIC_GetPriority(IRQn_Type IRQn) {
-    return 16 - ROM_IntPriorityGet(IRQn);
+uint32_t _NVIC_GetPriority(IRQn_Type IRQn) 
+{
+    return MAX_INTERRUPT_PRIORITY - ROM_IntPriorityGet(IRQn);
 }
 
 void data_abort_pc (void)

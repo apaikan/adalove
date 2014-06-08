@@ -23,8 +23,8 @@ Project Blink is
    end Naming;
 
    package Compiler is
-      for Default_Switches ("Ada") use ("-O2");
-      for Default_Switches ("c") use ("-O2");
+      for Default_Switches ("Ada") use ("-Os");
+      for Default_Switches ("c") use ("-Os");
    end Compiler;
 
    package Builder is

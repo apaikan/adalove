@@ -4,7 +4,7 @@ PART=LM4F120H5QR
 CPU=-mcpu=cortex-m4
 FPU=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 
-CFLAGS?=-O0 -g -Wall -Werror -ffunction-sections -fdata-sections -MD -std=c99  -mthumb ${CPU} ${FPU} \
+CFLAGS?=-Os -g -Wall -Werror -ffunction-sections -fdata-sections -MD -std=c99  -mthumb ${CPU} ${FPU} \
   -I$(RAVENSCAR_SRC)/lm4f120 \
   -I$(RAVENSCAR_SRC)/lm4f120/inc \
   -I$(RAVENSCAR_SRC)/lm4f120/driverlib \

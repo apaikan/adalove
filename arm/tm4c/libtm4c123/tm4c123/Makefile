@@ -14,6 +14,5 @@ all:
 	/usr/local/gnat/bin/g++ -c -fdump-ada-spec $(CFLAGS) *.h
 
 clean:
-	rm -f *.s *.ads
-
+	rm -f *.s *.ads *.d
 

@@ -12,9 +12,10 @@ package MyTasks is
         procedure UartIntHandler;
         pragma Attach_Handler (UartIntHandler, UART0_IntID);
 
-        entry Wait;
+        entry Get(Data : out Integer);
     private
-        Signaled  : Boolean := False;
+        Container : Integer;
+        Received  : Boolean := False;
     end Monitor;
 
 

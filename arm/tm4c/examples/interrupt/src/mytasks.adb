@@ -11,7 +11,8 @@ package body MyTasks is
     -- 
     protected body Monitor is
         procedure UartIntHandler is
-            Flag : Integer;
+            Flag   : Integer;
+            Status : Boolean; 
         begin
             Flag := IntStatus(UART0, TRUE);
             IntClear(UART0, Flag);
@@ -19,6 +20,7 @@ package body MyTasks is
             if Flag = INT_RX or Flag = INT_RT then
                 while CharsAvail(UART0) = TRUE loop
                     Container := CharGetNonBlocking(UART0);
+                    Status := CharPutNonBlocking(UART0, Container);
                     Received := True;
                 end loop;    
             end if;    
@@ -37,18 +39,41 @@ package body MyTasks is
     task body UartTask is
         Data : Integer;      
     begin
-        PinTypeOutput(PORTF, PIN1);
+        PinTypeOutput(PORTF, PIN2);
         loop
             Monitor.Get(Data); 
             -- handle interrupt here
-            CharPut(UART0, Data);
             if Data = 97 then 
-                PinWrite(PORTF, PIN1, PIN1);
+                PinWrite(PORTF, PIN2, PIN2);
             else
-                PinWrite(PORTF, PIN1, 0);
+                PinWrite(PORTF, PIN2, 0);
             end if;
         end loop;
     end UartTask;
+
+    --
+    -- Blinky Task body
+    --
+    task body BlinkyTask is        
+        Period : constant Time_Span := Seconds(3);
+        Next_Time : Time := Clock;
+    begin
+        PinTypeOutput(PORTF, PIN1+PIN2+PIN3);
+        loop
+            -- wait for the next period
+            Next_Time := Next_Time + Period - Milliseconds(50);
+            delay until Next_Time;            
+            PinWrite(PORTF, PIN1, PIN1);
+            PinWrite(PORTF, PIN2, PIN2);
+            PinWrite(PORTF, PIN3, PIN3);
+            -- wait for some ms then turn of leds
+            Next_Time := Next_Time + Milliseconds(50);
+            delay until Next_Time;            
+            PinWrite(PORTF, PIN1, 0);
+            PinWrite(PORTF, PIN2, 0);
+            PinWrite(PORTF, PIN3, 0); 
+      end loop;
+  end BlinkyTask;
 
 end MyTasks;
 

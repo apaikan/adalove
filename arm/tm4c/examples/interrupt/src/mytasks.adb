@@ -1,6 +1,7 @@
 
 with Ada.Real_Time;     use Ada.Real_Time;
 with Interfaces.C;      use Interfaces.C;
+with Interfaces;        use Interfaces;
 with TM4C.Gpio;         use TM4C.Gpio;
 with TM4C.Uart;         use TM4C.Uart;
 
@@ -26,7 +27,7 @@ package body MyTasks is
             end if;    
         end UartIntHandler;
 
-        entry Get(Data: out Integer) when Received is
+        entry Get(Data: out Unsigned_8) when Received is
         begin
             Data := Container;
             Received := False;
@@ -37,7 +38,7 @@ package body MyTasks is
     -- Uart task
     --
     task body UartTask is
-        Data : Integer;      
+        Data : Unsigned_8;      
     begin
         PinTypeOutput(PORTF, PIN2);
         loop

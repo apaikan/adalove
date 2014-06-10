@@ -1,4 +1,5 @@
 with System;
+with Interfaces;
 
 package MyTasks is
 
@@ -12,9 +13,9 @@ package MyTasks is
         procedure UartIntHandler;
         pragma Attach_Handler (UartIntHandler, UART0_IntID);
 
-        entry Get(Data : out Integer);
+        entry Get(Data : out Interfaces.Unsigned_8);
     private
-        Container : Integer;
+        Container : Interfaces.Unsigned_8;
         Received  : Boolean := False;
     end Monitor;
 
@@ -29,7 +30,6 @@ package MyTasks is
          pragma Priority (120);
          pragma Storage_Size (2*1024);
     end BlinkyTask;
-
 
 end MyTasks;
 

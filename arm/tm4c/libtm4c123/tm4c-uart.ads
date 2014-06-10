@@ -32,8 +32,9 @@
 -- 
 -------------------------------------------------------------------------
 
-with Interfaces.C; use Interfaces.C;
---with Interfaces.C.Extensions;
+with Interfaces;    use Interfaces;
+with Interfaces.C;  use Interfaces.C;
+with Ada.Unchecked_Conversion;
 
 package TM4C.Uart is
 
@@ -79,21 +80,20 @@ package TM4C.Uart is
    function SpaceAvail (Base : Integer) return Boolean;
    pragma Import (C, SpaceAvail, "UARTSpaceAvail");
 
-   function CharGet (Base : Integer) return Integer;
+   function CharGet (Base : Integer) return Unsigned_8;
    pragma Import (C, CharGet, "UARTCharGet");
    
-   function CharGetNonBlocking (Base : Integer) return Integer;
+   function CharGetNonBlocking (Base : Integer) return Unsigned_8;
    pragma Import (C, CharGetNonBlocking, "UARTCharGetNonBlocking");
 
-   procedure CharPut (Base : Integer; Data : Integer);
+   procedure CharPut (Base : Integer; Data : Unsigned_8);
    pragma Import (C, CharPut, "UARTCharPut");
    
-   function CharPutNonBlocking (Base : Integer; Data : Integer) return Boolean;
+   function CharPutNonBlocking (Base : Integer; Data : Unsigned_8) return Boolean;
    pragma Import (C, CharPutNonBlocking, "UARTCharPutNonBlocking");
 
    function Busy (Base : Integer) return Boolean;
    pragma Import (C, Busy, "UARTBusy");
-
 
 end TM4C.Uart;
 

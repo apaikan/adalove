@@ -6,24 +6,26 @@ with TM4C.Uart;
 with ARM.Uart;
 with ARM.Strings;       use ARM.Strings;
 
+with Interfaces;    use Interfaces;
+with Interfaces.C;  use Interfaces.C;
+with ARM.Strings;   use ARM.Strings;
+
 package body MyTasks is
+
+    package Stdio is new ARM.Uart(Port => TM4C.Uart.UART0);
 
     --
     -- Uart task
     --
     task body UartTask is
-        Period : constant Time_Span := Seconds(1);
-        Next_Time : Time := Clock;
-        --Msg : constant ARM_String := "Hello";
-        package Stdio is new ARM.Uart(Port => TM4C.Uart.UART0);
-    begin
-        PinTypeOutput(PORTF, PIN1+PIN2+PIN3);
+        Data : ARM_String(1..80);
+        Last : Unsigned_8;
+      begin
+        Stdio.Put_Line("Insert the message <enter>");
         loop
-            -- wait for the next period
-            Next_Time := Next_Time + Period;            
-            delay until Next_Time;          
-            Stdio.Put_Line("Hello from Ada :)");
-      end loop;
+            Stdio.Get_Line(Data, Last, Echo => True);
+            Stdio.Put_Line(Data(1 .. Last));
+        end loop;
 
     end UartTask;
 
@@ -34,20 +36,16 @@ package body MyTasks is
         Period : constant Time_Span := Seconds(3);
         Next_Time : Time := Clock;
     begin
-        PinTypeOutput(PORTF, PIN1+PIN2+PIN3);
+        PinTypeOutput(PORTF, PIN3);
         loop
             -- wait for the next period
             Next_Time := Next_Time + Period - Milliseconds(50);
             delay until Next_Time;            
-            PinWrite(PORTF, PIN1, PIN1);
-            PinWrite(PORTF, PIN2, PIN2);
             PinWrite(PORTF, PIN3, PIN3);
             -- wait for some ms then turn of leds
             Next_Time := Next_Time + Milliseconds(50);
             delay until Next_Time;            
-            PinWrite(PORTF, PIN1, 0);
-            PinWrite(PORTF, PIN2, 0);
-            PinWrite(PORTF, PIN3, 0); 
+            PinWrite(PORTF, PIN3, 0);
       end loop;
   end BlinkyTask;
 

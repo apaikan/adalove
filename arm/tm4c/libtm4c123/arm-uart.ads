@@ -36,31 +36,42 @@ with Interfaces;    use Interfaces;
 with Interfaces.C;  use Interfaces.C;
 with ARM.Strings;   use ARM.Strings;
 with Ada.Unchecked_Conversion;
+with Ada.Interrupts;
 
 generic 
     Port : Integer;
-    IRQ  : Integer := 21;
+    IRQ  : Ada.Interrupts.Interrupt_ID := 21;
 
 package ARM.Uart is
 
     function To_U8 is new Ada.Unchecked_Conversion (Source => Character,
                                                     Target => Unsigned_8);
+
+    function To_Char is new Ada.Unchecked_Conversion (Source => Unsigned_8,
+                                                      Target => Character);
     procedure Put (Ch : Character);
     procedure Put (S : ARM_String);
     procedure Put_Line (S : ARM_String);
+    
+    procedure Get (Ch : out Character);
+    procedure Get_Line (S : out ARM_String; 
+                        Last : out Unsigned_8;
+                        Echo : in Boolean := False);
 
     procedure New_Line;  --  only line-feed (LF)
     procedure CRLF;      --  DOS like CR & LF
 
---    protected Monitor is
---        -- pragma Priority (System.Interrupt_Priority'Last - 10);
---        procedure UartIntHandler;
---        pragma Attach_Handler (UartIntHandler, IRQ);
---        entry Get(Data : out Character);
---    private
---        Container  : AStr128;
---        Available  : Boolean := False;
---    end Monitor;
+    protected Monitor is
+        -- pragma Priority (System.Interrupt_Priority'Last - 10);
+        procedure UartIntHandler;
+        pragma Attach_Handler (UartIntHandler, IRQ);
+        entry Get(Data : out Character);
+    private
+        Container  : AStr128;
+        Available  : Boolean := False;
+        Rx_Inx     : Unsigned_8 := 1;
+        Rx_Outx    : Unsigned_8 := 1;
+    end Monitor;
 
 private
    pragma Inline (New_Line);

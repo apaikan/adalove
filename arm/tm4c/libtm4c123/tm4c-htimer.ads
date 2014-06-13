@@ -34,54 +34,52 @@
 
 with Interfaces;    use Interfaces;
 with Interfaces.C;  use Interfaces.C;
-with ARM.Strings;   use ARM.Strings;
 with Ada.Unchecked_Conversion;
-with Ada.Interrupts;
 
 generic 
-    Port : Integer;
-    IRQ  : Ada.Interrupts.Interrupt_ID := 21;
+    Timer : Integer := 16#40030000#;
+    TickPerSec : Integer := 80_000_000;
 
-package ARM.Uart is
+package TM4C.HTimer is
 
-    function To_U8 is new Ada.Unchecked_Conversion (Source => Character,
-                                                    Target => Unsigned_8);
+   TIMER0 : constant := 16#40030000#;  --  hw_memmap.h:89
+   TIMER1 : constant := 16#40031000#;  --  hw_memmap.h:90
+   TIMER2 : constant := 16#40032000#;  --  hw_memmap.h:91
+   TIMER3 : constant := 16#40033000#;  --  hw_memmap.h:92
+   TIMER4 : constant := 16#40034000#;  --  hw_memmap.h:93
+   TIMER5 : constant := 16#40035000#;  --  hw_memmap.h:94
 
-    function To_Char is new Ada.Unchecked_Conversion (Source => Unsigned_8,
-                                                      Target => Character);
-    procedure Put (Ch : Character);
-    procedure Put (S : ARM_String);
-    procedure Put_Line (S : ARM_String);
-    
-    procedure Get (Ch : out Character);
-    procedure Get_Line (S : out ARM_String; 
-                        Last : out Unsigned_8;
-                        Echo : in Boolean := False);
+    --
+    -- Initialize timer the Timer
+    --
+    procedure Init;
 
-    procedure IntToStr(Value : Integer;
-                       Str : out ARM_String;
-                       Last : out Unsigned_8);
+    --
+    -- Return the current timer tick
+    --
+    function GetTick return Integer;
 
-    procedure New_Line;  --  only line-feed (LF)
-    procedure CRLF;      --  DOS like CR & LF
+    --
+    -- Get duration in ticks
+    --
+    function GetSpan( StartT : Integer; EndT : Integer) return Integer; 
 
-    protected Monitor is
-        -- pragma Priority (System.Interrupt_Priority'Last - 10);
-        procedure UartIntHandler;
-        pragma Attach_Handler (UartIntHandler, IRQ);
-        entry Get(Data : out Character);
-    private
-        Container  : AStr128;
-        Available  : Boolean := False;
-        Rx_Inx     : Unsigned_8 := 1;
-        Rx_Outx    : Unsigned_8 := 1;
-    end Monitor;
+    --
+    -- Get duration in micro seconds
+    --
+    function GetSpanUsec( StartT : Integer; EndT : Integer) return Integer; 
 
-private
-   pragma Inline (New_Line);
-   pragma Inline (CRLF);
+    --
+    -- Get duration in milli seconds
+    --
+    function GetSpanMsec( StartT : Integer; EndT : Integer) return Integer; 
 
-end ARM.Uart;
+    --
+    -- Get duration in seconds
+    --
+    function GetSpanSec( StartT : Integer; EndT : Integer) return Integer; 
+
+end TM4C.HTimer;
 
 
 

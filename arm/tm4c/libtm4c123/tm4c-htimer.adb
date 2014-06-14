@@ -62,6 +62,23 @@ package body TM4C.HTimer is
         return GetSpan(StartT, EndT) / TickPerSec;
     end;
 
+    -- busy waiting in microseconds 
+    procedure WaitUsec(Duration : Integer) is 
+        Stime : Integer := GetTick;
+    begin
+        while GetSpanUsec(Stime, GetTick) < Duration  loop
+            null;
+        end loop;
+    end;
+
+    -- busy waiting in miliroseconds 
+    procedure WaitMsec(Duration : Integer) is 
+        Stime : Integer := GetTick;
+    begin
+        while GetSpanMsec(Stime, GetTick) < Duration  loop
+            null;
+        end loop;
+    end;
 
 end TM4C.HTimer;
 

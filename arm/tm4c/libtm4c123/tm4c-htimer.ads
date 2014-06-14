@@ -79,6 +79,13 @@ package TM4C.HTimer is
     --
     function GetSpanSec( StartT : Integer; EndT : Integer) return Integer; 
 
+    -- busy waiting in microseconds 
+    procedure WaitUsec(Duration : Integer);
+
+    -- busy waiting in miliseconds 
+    procedure WaitMsec(Duration : Integer);
+
+
 end TM4C.HTimer;
 
 

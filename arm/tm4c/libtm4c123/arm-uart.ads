@@ -62,6 +62,10 @@ package ARM.Uart is
                        Str : out ARM_String;
                        Last : out Unsigned_8);
 
+    procedure LongToStr(Value : Long_Integer;
+                       Str : out ARM_String;
+                       Last : out Unsigned_8);
+
     procedure New_Line;  --  only line-feed (LF)
     procedure CRLF;      --  DOS like CR & LF
 

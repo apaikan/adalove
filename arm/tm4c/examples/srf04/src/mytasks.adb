@@ -19,21 +19,21 @@ package body MyTasks is
     -- RTC task
     --
     task body Srf04Task is
-        Period : constant Time_Span := Milliseconds(500);
+        Period : constant Time_Span := Milliseconds(300);
         Next_Time : Time := Clock;
         Data : ARM_String(1..80);
         Last : Unsigned_8;
-        Value : Integer := 0;
+        Value : Long_Integer := 0;
         -- reading pulse width 
         function PulseIn(Port : Integer; 
-                         Pin : Integer; TimeoutMs : Integer) return Integer is
-        Now : Integer;       
+                         Pin : Integer; TimeoutMs : Long_Integer) return Long_Integer is
+        Now : Long_Integer;       
         begin
             -- wait for any previous pulse to finish
             Now := HTime.GetTick; 
             while PinRead(Port, Pin) /= 0 loop 
                 if HTime.GetSpanMsec(Now, HTime.GetTick) > TimeoutMs then
-                    return 0;
+                    return -1;
                 end if;
             end loop;
             
@@ -41,7 +41,7 @@ package body MyTasks is
             Now := HTime.GetTick; 
             while PinRead(Port, Pin) = 0 loop 
                 if HTime.GetSpanMsec(Now, HTime.GetTick) > TimeoutMs then
-                    return 0;
+                    return -1;
                 end if;
             end loop;
             
@@ -49,7 +49,7 @@ package body MyTasks is
             Now := HTime.GetTick; 
             while PinRead(Port, Pin) /= 0 loop 
                 if HTime.GetSpanMsec(Now, HTime.GetTick) > TimeoutMs then
-                    return 0;
+                    return -1;
                 end if;
             end loop;
             return HTime.GetSpanUsec(Now, HTime.GetTick); 
@@ -71,11 +71,9 @@ package body MyTasks is
             PinWrite(PORTD, PIN0, 0);
             
             -- reading the pulse width
-           Value := PulseIn(PORTD, PIN1, 50) / 58;
-
-            -- check if the puls width is within the sensor range
-            Stdio.IntToStr(Value, Data, Last); 
-            Stdio.Put_Line(Data(1 .. Last));                   
+            Value := Long_Integer(Float(PulseIn(PORTD, PIN1, 500)) / 5.246);
+            Stdio.LongToStr(Value, Data, Last); 
+            Stdio.Put_Line(Data(1 .. Last));
         end loop;
     end Srf04Task;
 

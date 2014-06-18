@@ -96,6 +96,36 @@ package body ARM.Uart is
             Str(Last) := Res(I);
             Last := Last + 1;
         end loop;
+        Last := Last - 1;
+    end;
+
+    procedure LongToStr(Value : Long_Integer;
+                       Str : out ARM_String;
+                       Last : out Unsigned_8)
+    is
+        Val : Long_Integer := Value;
+        Res : AStr20;
+        Pos : Unsigned_8 := Res'Last;        
+    begin
+        Last := Str'First;
+        if Val > 0 then
+            Val := -Val;
+         else
+            Str(Last) := '-';
+            Last := Last + 1;
+        end if;
+        loop
+             Res (Pos) := Character'Val (Character'Pos ('0') - (Val mod (-10)));
+             Val := Val / 10;
+             exit when Val = 0;
+             Pos := Pos - 1;
+        end loop;
+       
+        for I in Pos .. Res'Last loop
+            Str(Last) := Res(I);
+            Last := Last + 1;
+        end loop;
+        Last := Last - 1;
     end;
 
 

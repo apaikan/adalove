@@ -86,6 +86,8 @@ void init_board()
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOH);
 
+    // The Timer0 peripheral must be enabled for use with RTC    
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
 
     //
     // Enable the peripherals used by this example.
@@ -123,8 +125,9 @@ void init_board()
     uint32_t prio =  ROM_IntPriorityGet(INT_UART0); 
     ROM_IntPrioritySet(INT_UART0, 15);
     prio =  ROM_IntPriorityGet(INT_UART0); 
-    ROM_IntEnable(INT_UART0);
+    ROM_UARTIntDisable(UART0_BASE, 0xFFFFFFFF);
     ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
+    ROM_IntEnable(INT_UART0);
 }
 
 void setup_systick(int frequency) 

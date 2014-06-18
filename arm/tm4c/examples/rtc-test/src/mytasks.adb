@@ -23,7 +23,7 @@ package body MyTasks is
         Next_Time : Time := Clock;
         Data : ARM_String(1..80);
         Last : Unsigned_8;
-        Value : Integer := 0;
+        Value : Long_Integer := 0;
       begin
         Stdio.Put_Line("Timer counter example");
         HTime.Init;
@@ -32,7 +32,7 @@ package body MyTasks is
             Next_Time := Next_Time + Period;
             delay until Next_Time; 
             --Value := HTime.GetSpanUsec(Value, HTime.GetTick);
-            Stdio.IntToStr(Value, Data, Last); 
+            Stdio.LongToStr(Value, Data, Last); 
             Stdio.Put_Line(Data(1 .. Last));
         end loop;
     end RTCTask;

@@ -38,7 +38,7 @@ with Ada.Unchecked_Conversion;
 
 generic 
     Timer : Integer := 16#40030000#;
-    TickPerSec : Integer := 80_000_000;
+    TickPerSec : Long_Integer := 85_000_000;
 
 package TM4C.HTimer is
 
@@ -57,33 +57,33 @@ package TM4C.HTimer is
     --
     -- Return the current timer tick
     --
-    function GetTick return Integer;
+    function GetTick return Long_Integer;
 
     --
     -- Get duration in ticks
     --
-    function GetSpan( StartT : Integer; EndT : Integer) return Integer; 
+    function GetSpan( StartT : Long_Integer; EndT : Long_Integer) return Long_Integer; 
 
     --
     -- Get duration in micro seconds
     --
-    function GetSpanUsec( StartT : Integer; EndT : Integer) return Integer; 
+    function GetSpanUsec( StartT : Long_Integer; EndT : Long_Integer) return Long_Integer; 
 
     --
     -- Get duration in milli seconds
     --
-    function GetSpanMsec( StartT : Integer; EndT : Integer) return Integer; 
+    function GetSpanMsec( StartT : Long_Integer; EndT : Long_Integer) return Long_Integer; 
 
     --
     -- Get duration in seconds
     --
-    function GetSpanSec( StartT : Integer; EndT : Integer) return Integer; 
+    function GetSpanSec( StartT : Long_Integer; EndT : Long_Integer) return Long_Integer; 
 
     -- busy waiting in microseconds 
-    procedure WaitUsec(Duration : Integer);
+    procedure WaitUsec(Duration : Long_Integer);
 
     -- busy waiting in miliseconds 
-    procedure WaitMsec(Duration : Integer);
+    procedure WaitMsec(Duration : Long_Integer);
 
 
 end TM4C.HTimer;

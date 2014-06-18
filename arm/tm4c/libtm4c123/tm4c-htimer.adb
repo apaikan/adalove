@@ -12,10 +12,10 @@ package body TM4C.HTimer is
     TIMER_CFG_A_PERIODIC_UP : constant := 16#00000032#;  --  timer.h:75
     TIMER_CFG_B_PERIODIC_UP : constant := 16#00003200#;  --  timer.h:84
 
-    function TimerValueGet (Base : Integer; Timer : Integer) return Integer;  -- timer.h:263
+    function TimerValueGet (Base : Integer; Timer : Integer) return Long_Integer;  -- timer.h:263
     pragma Import (C, TimerValueGet, "TimerValueGet");
 
-    function TimerValueGet64 (Base : Integer) return Integer;  -- timer.h:264
+    function TimerValueGet64 (Base : Integer) return Long_Integer;  -- timer.h:264
     pragma Import (C, TimerValueGet64, "TimerValueGet64");
 
     procedure EnableTimer (Base : Integer; Timer : Integer);  -- timer.h:237
@@ -33,38 +33,38 @@ package body TM4C.HTimer is
         EnableTimer(Timer, TIMER_A);
     end;
 
-    function GetTick return Integer is
+    function GetTick return Long_Integer is
     begin
         return abs TimerValueGet(Timer, TIMER_A);
     end;
 
-    function GetSpan( StartT : Integer; 
-                      EndT : Integer) return Integer is
+    function GetSpan( StartT : Long_Integer; 
+                      EndT : Long_Integer) return Long_Integer is
     begin
         return abs( abs EndT - abs StartT);
     end;
 
-    function GetSpanUsec ( StartT : Integer;
-                        EndT : Integer) return Integer is
+    function GetSpanUsec ( StartT : Long_Integer;
+                        EndT : Long_Integer) return Long_Integer is
     begin
         return GetSpan(StartT, EndT) * 1000_000 / TickPerSec;
     end;
 
-    function GetSpanMsec ( StartT : Integer;
-                        EndT : Integer) return Integer is
+    function GetSpanMsec ( StartT : Long_Integer;
+                        EndT : Long_Integer) return Long_Integer is
     begin
         return GetSpan(StartT, EndT) * 1000 / TickPerSec;
     end;
 
-    function GetSpanSec (StartT : Integer;
-                        EndT : Integer) return Integer is
+    function GetSpanSec (StartT : Long_Integer;
+                        EndT : Long_Integer) return Long_Integer is
     begin
         return GetSpan(StartT, EndT) / TickPerSec;
     end;
 
     -- busy waiting in microseconds 
-    procedure WaitUsec(Duration : Integer) is 
-        Stime : Integer := GetTick;
+    procedure WaitUsec(Duration : Long_Integer) is 
+        Stime : Long_Integer := GetTick;
     begin
         while GetSpanUsec(Stime, GetTick) < Duration  loop
             null;
@@ -72,8 +72,8 @@ package body TM4C.HTimer is
     end;
 
     -- busy waiting in miliroseconds 
-    procedure WaitMsec(Duration : Integer) is 
-        Stime : Integer := GetTick;
+    procedure WaitMsec(Duration : Long_Integer) is 
+        Stime : Long_Integer := GetTick;
     begin
         while GetSpanMsec(Stime, GetTick) < Duration  loop
             null;

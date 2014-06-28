@@ -22,12 +22,13 @@ package body MyTasks is
         Next_Time : Time := Clock;
         Data : ARM_String(1..80);
         Last : Unsigned_8;
-        Value : aliased Long_Integer := 0;
-        Ret : Long_Integer := 0;
+        Value : aliased Integer := 0;
+        Ret : Integer := 0;
       begin
         -- configure adc
         SequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
-        SequenceConfigure(ADC0_BASE, 3, 0, ADC_CTL_TS + ADC_CTL_IE + ADC_CTL_END);
+       --SequenceConfigure(ADC0_BASE, 3, 0, ADC_CTL_TS + ADC_CTL_IE + ADC_CTL_END);
+        SequenceConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0 + ADC_CTL_IE + ADC_CTL_END);
         SequenceEnable(ADC0_BASE, 3);
         IntClear(ADC0_BASE, 3);
         loop
@@ -42,8 +43,9 @@ package body MyTasks is
             IntClear(ADC0_BASE, 3);
             Ret := SequenceDataGet(ADC0_BASE, 3, Value'Access);
             --Value := ((1475 * 1023) - (2250 * Value)) / 10230;
+            --Value := (1475 - ((2475 * Value)) / 4096)/10;           
             -- printing Temprature
-            Stdio.LongToStr(Value, Data, Last); 
+            Stdio.IntToStr(Value, Data, Last); 
             Stdio.Put_Line(Data(1 .. Last));
         end loop;
     end TempratureTask;

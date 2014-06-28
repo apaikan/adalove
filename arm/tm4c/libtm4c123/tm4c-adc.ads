@@ -46,7 +46,40 @@ package TM4C.ADC is
    ADC_CTL_TS : constant  := 16#00000080#;  --  adc.h:84
    ADC_CTL_IE : constant  := 16#00000040#;  --  adc.h:85
    ADC_CTL_END : constant := 16#00000020#;  --  adc.h:86
- 
+   ADC_CTL_D : constant := 16#00000010#;  --  adc.h:87
+   ADC_CTL_CH0 : constant := 16#00000000#;  --  adc.h:88
+   ADC_CTL_CH1 : constant := 16#00000001#;  --  adc.h:89
+   ADC_CTL_CH2 : constant := 16#00000002#;  --  adc.h:90
+   ADC_CTL_CH3 : constant := 16#00000003#;  --  adc.h:91
+   ADC_CTL_CH4 : constant := 16#00000004#;  --  adc.h:92
+   ADC_CTL_CH5 : constant := 16#00000005#;  --  adc.h:93
+   ADC_CTL_CH6 : constant := 16#00000006#;  --  adc.h:94
+   ADC_CTL_CH7 : constant := 16#00000007#;  --  adc.h:95
+   ADC_CTL_CH8 : constant := 16#00000008#;  --  adc.h:96
+   ADC_CTL_CH9 : constant := 16#00000009#;  --  adc.h:97
+   ADC_CTL_CH10 : constant := 16#0000000A#;  --  adc.h:98
+   ADC_CTL_CH11 : constant := 16#0000000B#;  --  adc.h:99
+   ADC_CTL_CH12 : constant := 16#0000000C#;  --  adc.h:100
+--   ADC_CTL_CH13 : constant := 16#0000000D#;  --  adc.h:101
+--   ADC_CTL_CH14 : constant := 16#0000000E#;  --  adc.h:102
+--   ADC_CTL_CH15 : constant := 16#0000000F#;  --  adc.h:103
+--   ADC_CTL_CH16 : constant := 16#00000100#;  --  adc.h:104
+--   ADC_CTL_CH17 : constant := 16#00000101#;  --  adc.h:105
+--   ADC_CTL_CH18 : constant := 16#00000102#;  --  adc.h:106
+--   ADC_CTL_CH19 : constant := 16#00000103#;  --  adc.h:107
+--   ADC_CTL_CH20 : constant := 16#00000104#;  --  adc.h:108
+--   ADC_CTL_CH21 : constant := 16#00000105#;  --  adc.h:109
+--   ADC_CTL_CH22 : constant := 16#00000106#;  --  adc.h:110
+--   ADC_CTL_CH23 : constant := 16#00000107#;  --  adc.h:111
+--   ADC_CTL_CMP0 : constant := 16#00080000#;  --  adc.h:112
+--   ADC_CTL_CMP1 : constant := 16#00090000#;  --  adc.h:113
+--   ADC_CTL_CMP2 : constant := 16#000A0000#;  --  adc.h:114
+--   ADC_CTL_CMP3 : constant := 16#000B0000#;  --  adc.h:115
+--   ADC_CTL_CMP4 : constant := 16#000C0000#;  --  adc.h:116
+--   ADC_CTL_CMP5 : constant := 16#000D0000#;  --  adc.h:117
+--   ADC_CTL_CMP6 : constant := 16#000E0000#;  --  adc.h:118
+--   ADC_CTL_CMP7 : constant := 16#000F0000#;  --  adc.h:119
+
    procedure SequenceConfigure
      (Base : Integer;
       SequenceNum : Integer;
@@ -82,7 +115,7 @@ package TM4C.ADC is
    function SequenceDataGet
      (Base : Integer;
       SequenceNum : Integer;
-      pBuffer : access Long_Integer) return Long_Integer;  -- adc.h:254
+      pBuffer : access Integer) return Integer;  -- adc.h:254
    pragma Import (C, SequenceDataGet, "ADCSequenceDataGet");
 
 

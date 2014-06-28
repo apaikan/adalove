@@ -128,6 +128,12 @@ void init_board()
     ROM_UARTIntDisable(UART0_BASE, 0xFFFFFFFF);
     ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
     ROM_IntEnable(INT_UART0);
+
+    //
+    // Enable ADC
+    //
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
+
 }
 
 void setup_systick(int frequency) 

@@ -24,7 +24,13 @@ package body MyTasks is
         Stdio.Put_Line("Insert the message <enter>");
         loop
             Stdio.Get_Line(Data, Last, Echo => True);
-            Stdio.Put_Line(Data(1 .. Last));
+            -- Stdio.Put_Line(Data(1 .. Last));
+            if Data(1..Last) = "Hello" then 
+                Stdio.Put_Line("Hey you! :)");
+            else
+                Stdio.Put("Got it: ");
+                Stdio.Put_Line(Data(1..Last));
+            end if;
         end loop;
 
     end UartTask;

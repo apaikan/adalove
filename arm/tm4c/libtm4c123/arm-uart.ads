@@ -66,6 +66,8 @@ package ARM.Uart is
                        Str : out ARM_String;
                        Last : out Unsigned_8);
 
+    function StrToInt(Str: ARM_String; Last: Unsigned_8) return Integer;
+
     procedure New_Line;  --  only line-feed (LF)
     procedure CRLF;      --  DOS like CR & LF
 

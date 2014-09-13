@@ -128,6 +128,20 @@ package body ARM.Uart is
         Last := Last - 1;
     end;
 
+    function StrToInt(Str: ARM_String; Last: Unsigned_8) return Integer
+    is
+        Val : Integer := 0;
+        Pwr : Integer;
+    begin
+        for I in reverse 1..Last loop
+            Pwr := 1;
+            if I > 1 then
+                for J in 2..I loop Pwr := Pwr * 10; end loop;
+            end if;    
+            Val := Val + (Character'Pos(Str(Last-I+1)) - Character'Pos('0')) * Pwr;
+        end loop;
+        return Val;
+    end;
 
     --
     -- Monitor object

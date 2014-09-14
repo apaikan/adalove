@@ -2,14 +2,14 @@
 package MyTasks is
 
     task RedTask is
-        pragma Priority (2);
-        pragma Storage_Size (100);
+        pragma Priority (131);
+        pragma Storage_Size (2*1024);
     end RedTask;
 
---    task GreenTask is
---        pragma Priority (1);
---        pragma Storage_Size (100);
---    end GreenTask;
+    task GreenTask is
+         pragma Priority (130);
+         pragma Storage_Size (2*1024);
+     end GreenTask;
 
 end MyTasks;
 

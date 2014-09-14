@@ -76,13 +76,13 @@ package System.BB.Parameters is
    --  dependencies.
 
    Interrupt_Levels : constant Positive := 16;
-   --  Number of interrupt levels in the STM43F4 architecture.
+   --  Number of interrupt levels in the tm4c architecture.
 
    subtype Interrupt_Level is Natural range 0 .. Interrupt_Levels;
    --  Type that defines the range of possible interrupt levels
 
    Interrupts : constant := 97;
-   --  The number of interrupts on the STM32.
+   --  The number of interrupts on the tm4c.
 
    ------------
    -- Stacks --

@@ -37,8 +37,8 @@ Project Simple_Tasks is
 
    package Linker is
       --for Switches ("main.adb") use ("-g");
-        for Default_Switches ("Ada") use ("-llm4f120");
-        for Default_Switches ("c") use ("-llm4f120");
+        for Default_Switches ("Ada") use ("-ltm4c123");
+        for Default_Switches ("c") use ("-ltm4c123");
    end Linker;
 
 end Simple_Tasks;

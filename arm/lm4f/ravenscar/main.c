@@ -26,6 +26,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include "driverlib/rom.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -36,6 +37,12 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
+#include "inc/hw_ints.h"
+
+#define MAX_INTERRUPT_PRIORITY      32     //we use only 32 level of interrupt priorities
+#define portNVIC_SYSPRI2			( ( volatile unsigned long * ) 0xe000ed20 )
+#define portNVIC_PENDSV_PRI			( ( ( unsigned long ) MAX_INTERRUPT_PRIORITY-1 ) << 16 )
+#define portNVIC_SYSTICK_PRI		( ( ( unsigned long ) MAX_INTERRUPT_PRIORITY-1 ) << 24 )
 
 typedef unsigned long IRQn_Type;
 
@@ -70,13 +77,25 @@ void init_board()
     ROM_IntPriorityGroupingSet(NVIC_APINT_PRIGROUP_4_4);
 
 
+    // Enabling all the peripheral ports
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOH);
+
+    // The Timer0 peripheral must be enabled for use with RTC    
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+
     //
     // Enable the peripherals used by this example.
     // The UART itself needs to be enabled, as well as the GPIO port
     // containing the pins that will be used.
     //
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART3);
 
     //
     // Configure the GPIO pin muxing for the UART function.
@@ -85,12 +104,14 @@ void init_board()
     //
     ROM_GPIOPinConfigure(GPIO_PA0_U0RX);
     ROM_GPIOPinConfigure(GPIO_PA1_U0TX);
-
+    ROM_GPIOPinConfigure(GPIO_PC6_U3RX);
+    ROM_GPIOPinConfigure(GPIO_PC7_U3TX);
     //
     // Since GPIO A0 and A1 are used for the UART function, they must be
     // configured for use as a peripheral function (instead of GPIO).
     //
     ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    ROM_GPIOPinTypeUART(GPIO_PORTC_BASE, GPIO_PIN_6 | GPIO_PIN_7);
 
     //
     // Configure the UART for 115,200, 8-N-1 operation.
@@ -101,12 +122,42 @@ void init_board()
     ROM_UARTConfigSetExpClk(UART0_BASE, ROM_SysCtlClockGet(), 115200,
                         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
                          UART_CONFIG_PAR_NONE));
+    ROM_UARTConfigSetExpClk(UART3_BASE, ROM_SysCtlClockGet(), 115200,
+                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+                         UART_CONFIG_PAR_NONE));
+    //
+    // Enable the UART interrupt.
+    //
+    ROM_IntPriorityGet(INT_UART0); 
+    ROM_IntPrioritySet(INT_UART0, 15);
+    ROM_IntPriorityGet(INT_UART0); 
+    ROM_UARTIntDisable(UART0_BASE, 0xFFFFFFFF);
+    ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
+    ROM_IntEnable(INT_UART0);
+
+    ROM_IntPriorityGet(INT_UART3); 
+    ROM_IntPrioritySet(INT_UART3, 15);
+    ROM_IntPriorityGet(INT_UART3); 
+    ROM_UARTIntDisable(UART3_BASE, 0xFFFFFFFF);
+    ROM_UARTIntEnable(UART3_BASE, UART_INT_RX | UART_INT_RT);
+    ROM_IntEnable(INT_UART3);
+
+    //
+    // Enable ADC
+    //
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
+    ROM_GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3); // A0
 }
 
 void setup_systick(int frequency) 
-{
-    //NVIC_SetPriority (PendSV_IRQn, (1<<__NVIC_PRIO_BITS) - 1);
-    ROM_IntPrioritySet(14, 15);
+{      
+	/* Make PendSV and SysTick the lowest priority interrupts. */
+	*(portNVIC_SYSPRI2) |= portNVIC_PENDSV_PRI;
+	*(portNVIC_SYSPRI2) |= portNVIC_SYSTICK_PRI;    
+
+    ROM_IntPriorityGet(14); // pendsv
+    ROM_IntPriorityGet(15); // systick
+
     ROM_SysTickPeriodSet(ROM_SysCtlClockGet()/frequency-1);
     // Enable interrupts to the processor.
     ROM_IntMasterEnable();
@@ -123,45 +174,14 @@ int get_current_interrupt()
   return ipsr.b.IPSR;
 }
 
-void context_switch() {
+void context_switch() 
+{
   *((uint32_t volatile *)0xE000ED04) = 0x10000000; // trigger PendSV
 }
 
-/*
-// Export some static inline function for Ada.
-void _NVIC_EnableIRQ(IRQn_Type IRQn) {
-  IntMasterEnable(  
-  NVIC_EnableIRQ(IRQn - 16);
-}
-
-void _NVIC_DisableIRQ(IRQn_Type IRQn) {
-  NVIC_DisableIRQ(IRQn - 16);
-}
-
-uint32_t _NVIC_GetPendingIRQ(IRQn_Type IRQn) {
-  return NVIC_GetPendingIRQ(IRQn - 16);
-}
-
-void _NVIC_SetPendingIRQ(IRQn_Type IRQn) {
-  NVIC_SetPendingIRQ(IRQn - 16);
-}
-
-void _NVIC_ClearPendingIRQ(IRQn_Type IRQn) {
-    NVIC_ClearPendingIRQ(IRQn - 16);
-}
-
-uint32_t _NVIC_GetActive(IRQn_Type IRQn) {
-    return NVIC_GetActive(IRQn - 16);
-}
-
-void _NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority) {
-    NVIC_SetPriority(IRQn - 16, 16 - priority);
-}
-
-*/
-
-uint32_t _NVIC_GetPriority(IRQn_Type IRQn) {
-    return 16 - ROM_IntPriorityGet(IRQn);
+uint32_t _NVIC_GetPriority(IRQn_Type IRQn) 
+{
+    return MAX_INTERRUPT_PRIORITY - ROM_IntPriorityGet(IRQn);
 }
 
 void data_abort_pc (void)

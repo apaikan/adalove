@@ -133,7 +133,7 @@ void init_board()
     // Enable ADC
     //
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
-
+    ROM_GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3); // A0
 }
 
 void setup_systick(int frequency) 

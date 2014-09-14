@@ -1,9 +1,10 @@
-Project Blink is
+project Blink is
    ----------------
    -- Attributes --
    ----------------
+
    for Languages use ("c", "Ada");
-   for Source_Dirs use ("../../liblm4f120", "./include", "./src", "./build");
+   for Source_Dirs use ("../../liblm4f120", "include", "src", "build");
    for Main use ("main.adb");
    for Object_Dir use "./build";
    for Exec_Dir use "./";
@@ -11,34 +12,34 @@ Project Blink is
    --------------
    -- Packages --
    --------------
-    Prefix := external ("PREFIX", "");
-    package Ide is
-      for Compiler_Command ("Ada") use Prefix & "arm-none-eabi-gnat";
-      for Compiler_Command ("c") use Prefix & "arm-none-eabi-gcc";
-    end Ide;
+   --Prefix := external ("PREFIX", "");
+   package Ide is
+      for Compiler_Command ("Ada") use "arm-none-eabi-gnat";
+      for Compiler_Command ("c") use "arm-none-eabi-gcc";
+      for Debugger_Command use "arm-none-eabi-gdb.sh";
+      for Gnat use "arm-none-eabi-gnat";
+      for Gnatlist use "arm-none-eabi-gnatls";
+   end Ide;
 
    package Naming is
-      for Specification_Suffix ("c") use ".h";
-      for Implementation_Suffix ("c") use ".c";
+      for Spec_Suffix ("c") use ".h";
+      for Body_Suffix ("c") use ".c";
    end Naming;
 
    package Compiler is
-      for Default_Switches ("Ada") use ("-Os");
+      for Default_Switches ("ada") use ("-Os");
       for Default_Switches ("c") use ("-Os");
    end Compiler;
 
    package Builder is
-        for Executable ("main") use "main";
-        for Executable_Suffix use ".out";
-        for Default_Switches ("Ada") use ("--RTS=rts-raven", "-g",
-                                          "-largs", 
-                                          "-T/home/apaikan/Install/ADA/arm-ada/toolchain/ravenscar/kernel_samba.ld");
+      for Executable_Suffix use ".out";
+      for Default_Switches ("ada") use ("--RTS=rts-raven", "-g", "-largs", "-T/home/apaikan/Install/ADA/arm-ada/toolchain/ravenscar/kernel_samba.ld");
    end Builder;
 
    package Linker is
       --for Switches ("main.adb") use ("-g");
-        for Default_Switches ("Ada") use ("-llm4f120");
-        for Default_Switches ("c") use ("-llm4f120");
+      for Default_Switches ("ada") use ("-llm4f120");
+      for Default_Switches ("c") use ("-llm4f120");
    end Linker;
 
 end Blink;

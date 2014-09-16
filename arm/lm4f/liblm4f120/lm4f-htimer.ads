@@ -37,7 +37,7 @@ with Interfaces.C;  use Interfaces.C;
 with Ada.Unchecked_Conversion;
 
 generic 
-    Timer : Integer := 16#40030000#;
+    Timer : Integer := 16#40034000#;
     TickPerSec : Long_Integer := 85_000_000;
 
 package LM4F.HTimer is

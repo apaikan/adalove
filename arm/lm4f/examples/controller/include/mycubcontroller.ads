@@ -3,7 +3,7 @@ with System;
 package MyCubController is
    
     subtype Joint_ID is Integer range 0..3;
-    subtype Joint_POS is Integer range 8..160;
+    subtype Joint_POS is Integer range 0..180;
     type Joint_Context is array (0..3) of Joint_POS;
 
 

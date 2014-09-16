@@ -18,7 +18,8 @@ all: peripherals
 
 peripherals:
 	arm-none-eabi-gcc -c ./src_c/servo.c -o build/servo.o $(CFLAGS)
-	arm-none-eabi-ar rcs ./build/libperipherals.a build/servo.o
+	arm-none-eabi-gcc -c ./src_c/uart.c -o build/uart.o $(CFLAGS)
+	arm-none-eabi-ar rcs ./build/libperipherals.a build/servo.o build/uart.o
 
 flash:
 	sudo lm4flash main.bin

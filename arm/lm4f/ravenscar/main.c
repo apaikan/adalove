@@ -86,31 +86,33 @@ void init_board()
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOH);
 
-    // The Timer0 peripheral must be enabled for use with RTC    
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    // The Timer4 peripheral must be enabled for use with RTC    
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER4);
 
+   
+    /*
     //
     // Enable the peripherals used by this example.
     // The UART itself needs to be enabled, as well as the GPIO port
     // containing the pins that will be used.
-    //
-    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    
+    //ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART3);
 
     //
     // Configure the GPIO pin muxing for the UART function.
     // This is only necessary if your part supports GPIO pin function muxing.
     // Study the data sheet to see which functions are allocated per pin.
-    //
-    ROM_GPIOPinConfigure(GPIO_PA0_U0RX);
-    ROM_GPIOPinConfigure(GPIO_PA1_U0TX);
+    
+    //ROM_GPIOPinConfigure(GPIO_PA0_U0RX);
+    //ROM_GPIOPinConfigure(GPIO_PA1_U0TX);
     ROM_GPIOPinConfigure(GPIO_PC6_U3RX);
     ROM_GPIOPinConfigure(GPIO_PC7_U3TX);
     //
     // Since GPIO A0 and A1 are used for the UART function, they must be
     // configured for use as a peripheral function (instead of GPIO).
     //
-    ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    //ROM_GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     ROM_GPIOPinTypeUART(GPIO_PORTC_BASE, GPIO_PIN_6 | GPIO_PIN_7);
 
     //
@@ -118,22 +120,22 @@ void init_board()
     // This function uses SysCtlClockGet() to get the system clock
     // frequency.  This could be also be a variable or hard coded value
     // instead of a function call.
-    //
-    ROM_UARTConfigSetExpClk(UART0_BASE, ROM_SysCtlClockGet(), 115200,
-                        (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
-                         UART_CONFIG_PAR_NONE));
+    
+    //ROM_UARTConfigSetExpClk(UART0_BASE, ROM_SysCtlClockGet(), 115200,
+    //                    (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+    //                     UART_CONFIG_PAR_NONE));
     ROM_UARTConfigSetExpClk(UART3_BASE, ROM_SysCtlClockGet(), 115200,
                         (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
                          UART_CONFIG_PAR_NONE));
     //
     // Enable the UART interrupt.
     //
-    ROM_IntPriorityGet(INT_UART0); 
-    ROM_IntPrioritySet(INT_UART0, 15);
-    ROM_IntPriorityGet(INT_UART0); 
-    ROM_UARTIntDisable(UART0_BASE, 0xFFFFFFFF);
-    ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
-    ROM_IntEnable(INT_UART0);
+    //ROM_IntPriorityGet(INT_UART0); 
+    //ROM_IntPrioritySet(INT_UART0, 15);
+    //ROM_IntPriorityGet(INT_UART0); 
+    //ROM_UARTIntDisable(UART0_BASE, 0xFFFFFFFF);
+    //ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
+    //ROM_IntEnable(INT_UART0);
 
     ROM_IntPriorityGet(INT_UART3); 
     ROM_IntPrioritySet(INT_UART3, 15);
@@ -141,12 +143,15 @@ void init_board()
     ROM_UARTIntDisable(UART3_BASE, 0xFFFFFFFF);
     ROM_UARTIntEnable(UART3_BASE, UART_INT_RX | UART_INT_RT);
     ROM_IntEnable(INT_UART3);
+    */
 
     //
     // Enable ADC
     //
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
-    ROM_GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3); // A0
+    //ROM_GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3); // A0
+    ROM_GPIOPinTypeADC(GPIO_PORTD_BASE, GPIO_PIN_2);   // A5
+    ROM_GPIOPinTypeADC(GPIO_PORTD_BASE, GPIO_PIN_1);   // A6
 }
 
 void setup_systick(int frequency) 

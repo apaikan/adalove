@@ -11,6 +11,7 @@ with Interfaces.C;      use Interfaces.C;
 with ARM.Strings;       use ARM.Strings;
 
 with MyCubController;   use MyCubController;
+with MyCubWorkingMemory; use MyCubWorkingMemory;
 
 package body MyCubInterface is
 
@@ -66,6 +67,13 @@ package body MyCubInterface is
         Duration : Integer;
         Ret : Boolean;
       begin
+            -- wait for few seconds then start the Uart
+            PinTypeOutput(PORTF, PIN1);
+            PinWrite(PORTF, PIN1, PIN1);
+            delay until Clock + Seconds(15); 
+            PinWrite(PORTF, PIN1, 0);
+            UartSetup;
+
         loop
             Stdio.Get_Line(Data, Last, Echo => False);
             ParseCommand(Data, Last, Commands, Count);
@@ -73,12 +81,12 @@ package body MyCubInterface is
             
             if Count = 0 then
                 Stdio.Put_Line("[error]"); 
-            end if;
 
             --
             -- ping
             --
-            if Commands(1).Str(1..Commands(1).Size) = "ping" then
+            elsif Commands(1).Str(1..Commands(1).Size) = "ping" or 
+                  Commands(1).Str(2..Commands(1).Size) = "ping"  then
                 Stdio.Put_Line("[ok]"); 
             --
             -- startControl
@@ -158,7 +166,9 @@ package body MyCubInterface is
             -- getBatteryVolt
             --
             elsif Commands(1).Str(1..Commands(1).Size) = "getBatteryVolt" then
-                Stdio.Put_Line("0.0"); 
+                Pos := GetBatteryVolt;
+                Stdio.IntToStr(Pos, Data, Last); 
+                Stdio.Put_Line(Data(1 .. Last));
             --
             -- getBatteryCurrent
             --
@@ -170,7 +180,9 @@ package body MyCubInterface is
             elsif Commands(1).Str(1..Commands(1).Size) = "getDistance" then
                 if Count >= 2 then
                     Joint := Stdio.StrToInt(Commands(2).Str, Commands(2).Size);
-                    Stdio.Put_Line("0");
+                    Pos := GetDistance;
+                    Stdio.IntToStr(Pos, Data, Last); 
+                    Stdio.Put_Line(Data(1 .. Last));
                 else
                     Stdio.Put_Line("[error]"); 
                 end if;

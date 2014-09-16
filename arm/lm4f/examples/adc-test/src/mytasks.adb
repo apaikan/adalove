@@ -27,8 +27,8 @@ package body MyTasks is
       begin
         -- configure adc
         SequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
-       --SequenceConfigure(ADC0_BASE, 3, 0, ADC_CTL_TS + ADC_CTL_IE + ADC_CTL_END);
-        SequenceConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH0 + ADC_CTL_IE + ADC_CTL_END);
+       --SequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_TS + ADC_CTL_IE + ADC_CTL_END);
+        SequenceConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH6 + ADC_CTL_IE + ADC_CTL_END);
         SequenceEnable(ADC0_BASE, 3);
         IntClear(ADC0_BASE, 3);
         loop

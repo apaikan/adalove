@@ -14,6 +14,9 @@ package MyCubInterface is
 
     type MyCub_Command is array (Unsigned_8 range 1..4) of Specific_String; 
     
+    procedure UartSetup; 
+    pragma Import (C, UartSetup, "uart_setup");
+
     procedure ParseCommand(Str: ARM_String;
                            Last: Unsigned_8;
                            Commands: out MyCub_Command;

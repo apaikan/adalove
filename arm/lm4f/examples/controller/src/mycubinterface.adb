@@ -72,7 +72,15 @@ package body MyCubInterface is
             PinWrite(PORTF, PIN1, PIN1);
             delay until Clock + Seconds(15); 
             PinWrite(PORTF, PIN1, 0);
+            
+            -- initialize uart
             UartSetup;
+            
+            -- start motor controllers
+            Ret := StartController;            
+            for I in 0..3 loop
+                Ret := SetPose(I, 8);
+            end loop;
 
         loop
             Stdio.Get_Line(Data, Last, Echo => False);
@@ -94,9 +102,6 @@ package body MyCubInterface is
             elsif Commands(1).Str(1..Commands(1).Size) = "startControl" then
                 
                 if StartController = True then 
-                    for I in 0..3 loop
-                        Ret := SetPose(I, 8);
-                    end loop;
                     Stdio.Put_Line("[ok]"); 
                 else
                     Stdio.Put_Line("[error]"); 
@@ -134,7 +139,7 @@ package body MyCubInterface is
                     else
                         Duration := 0;
                     end if;
-                    if SetPose(Joint, Pos) = True then
+                    if GotoPose(Joint, Pos, Duration) = True then
                         Stdio.Put_Line("[ok]");
                     else
                         Stdio.Put_Line("[error]");
@@ -154,7 +159,7 @@ package body MyCubInterface is
                     else
                         Duration := 0;
                     end if;
-                    if SetPose(Joint, Pos) = True then
+                    if GotoPose(Joint, Pos, Duration) = True then
                         Stdio.Put_Line("[ok]");
                     else
                         Stdio.Put_Line("[error]");
@@ -192,7 +197,9 @@ package body MyCubInterface is
             elsif Commands(1).Str(1..Commands(1).Size) = "getPose" then
                 if Count >= 2 then
                     Joint := Stdio.StrToInt(Commands(2).Str, Commands(2).Size);
-                    Stdio.Put_Line("0");
+                    Pos := getPose(Joint);
+                    Stdio.IntToStr(Pos, Data, Last); 
+                    Stdio.Put_Line(Data(1 .. Last));
                 else
                     Stdio.Put_Line("[error]"); 
                 end if;

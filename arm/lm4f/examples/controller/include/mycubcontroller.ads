@@ -89,11 +89,10 @@ private
     procedure PositionController(joint: Joint_ID; Current: Joint_POS; Target: PositionSpeed);
 
     protected Current_Poses is
-        procedure Set(joint: Joint_ID; pos: Joint_POS); 
-        entry Get(joint: Joint_ID; pos : out Joint_POS);
+       procedure Set(joint: Joint_ID; pos: Joint_POS); 
+       procedure Get(joint: Joint_ID; pos : out Joint_POS);
     private
-        Container : Joint_Context;
-        Received  : Boolean := False;
+       Container : Joint_Context;
     end Current_Poses;
 
 end MyCubController;

@@ -1,7 +1,7 @@
 
 with Ada.Real_Time;     use Ada.Real_Time;
 with Interfaces.C;      use Interfaces.C;
-
+with LM4F.Gpio;         use LM4F.Gpio;
 
 package body MyCubController is
     
@@ -50,11 +50,9 @@ package body MyCubController is
         procedure Set(joint: Joint_ID; pos: Joint_POS) is
         begin
             Container(joint) := pos;
-            Received := True;
         end Set;
 
-        entry Get(joint: Joint_ID; pos : out Joint_POS)
-            when Received is
+        procedure Get(joint: Joint_ID; pos : out Joint_POS) is
         begin
             pos := Container(joint);
         end Get;
@@ -135,7 +133,7 @@ package body MyCubController is
                 Next_Time := Next_Time + Milliseconds(Resolution);
                 delay until Next_Time;            
             end loop;
-        else
+        elsif Current > Target.Pos then
             Resolution := Target.Duration / (Current - Target.Pos);
             for I in reverse Target.Pos .. Current loop
                 Ret := Ret and SetPose(joint, I);

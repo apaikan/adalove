@@ -38,14 +38,11 @@ package body MyCubWorkingMemory is
         procedure Put(Data : Integer) is
         begin
             Container := Data;
-            Received := True;
         end Put;
 
-        entry Get(Data : out Integer)
-            when Received is
+        procedure Get(Data : out Integer) is
         begin
             Data := Container;
-            --Received := False;
         end Get;
     end BatteryRaw;
 
@@ -56,14 +53,11 @@ package body MyCubWorkingMemory is
         procedure Put(Data : Integer) is
         begin
             Container := Data;
-            Received := True;
         end Put;
 
-        entry Get(Data : out Integer)
-            when Received is
+        procedure Get(Data : out Integer) is
         begin
             Data := Container;
-            --Received := False;
         end Get;
     end DistanceRaw;
 

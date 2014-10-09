@@ -7,18 +7,16 @@ package MyCubWorkingMemory is
 
     protected BatteryRaw is
         procedure Put (Data : Integer);
-        entry Get (Data : out Integer);
+        procedure Get (Data : out Integer);
     private
         Container : Integer;
-        Received  : Boolean := False;
     end BatteryRaw;
 
     protected DistanceRaw is
         procedure Put (Data : Integer);
-        entry Get (Data : out Integer);
+        procedure Get (Data : out Integer);
     private
         Container : Integer;
-        Received  : Boolean := False;
     end DistanceRaw;
 
     -- tasks

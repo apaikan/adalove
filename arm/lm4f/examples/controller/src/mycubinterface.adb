@@ -78,9 +78,9 @@ package body MyCubInterface is
             
             -- start motor controllers
             Ret := StartController;            
-            for I in 0..3 loop
-                Ret := SetPose(I, 8);
-            end loop;
+            --for I in 0..3 loop
+            --    Ret := SetPose(I, 8);
+            --end loop;
 
         loop
             Stdio.Get_Line(Data, Last, Echo => False);
@@ -197,7 +197,7 @@ package body MyCubInterface is
             elsif Commands(1).Str(1..Commands(1).Size) = "getPose" then
                 if Count >= 2 then
                     Joint := Stdio.StrToInt(Commands(2).Str, Commands(2).Size);
-                    Pos := getPose(Joint);
+                    Pos := GetPose(Joint);
                     Stdio.IntToStr(Pos, Data, Last); 
                     Stdio.Put_Line(Data(1 .. Last));
                 else

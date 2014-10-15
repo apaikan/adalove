@@ -152,6 +152,17 @@ void init_board()
     //ROM_GPIOPinTypeADC(GPIO_PORTE_BASE, GPIO_PIN_3); // A0
     ROM_GPIOPinTypeADC(GPIO_PORTD_BASE, GPIO_PIN_2);   // A5
     ROM_GPIOPinTypeADC(GPIO_PORTD_BASE, GPIO_PIN_1);   // A6
+
+    // 
+    // Enable I2C1
+    //
+    //SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    GPIOPinTypeI2CSCL(GPIO_PORTA_BASE, GPIO_PIN_6);
+    ROM_GPIOPinTypeI2C(GPIO_PORTA_BASE, GPIO_PIN_7);
+    ROM_GPIOPinConfigure(GPIO_PA6_I2C1SCL);
+    ROM_GPIOPinConfigure(GPIO_PA7_I2C1SDA);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C1);
+
 }
 
 void setup_systick(int frequency) 

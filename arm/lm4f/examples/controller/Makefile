@@ -6,9 +6,14 @@ PART=LM4F120H5QR
 CPU=-mcpu=cortex-m4
 FPU=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 LM4F_ROOT=../../ravenscar/lm4f120
-CFLAGS?=-Os -g -Wall -Werror -ffunction-sections -fdata-sections -MD -std=c99  -mthumb ${CPU} ${FPU} \
+#CFLAGS?=-Os -g -Wall -Werror -ffunction-sections -fdata-sections -MD -std=c99  -mthumb ${CPU} ${FPU} \
   -I$(LM4F_ROOT) \
   -DPART_$(PART) -DTARGET_IS_BLIZZARD_RA1 -Dgcc
+
+CFLAGS?=-Os -g -Wall -ffunction-sections -fdata-sections -MD -std=c99  -mthumb ${CPU} ${FPU} \
+  -I$(LM4F_ROOT) \
+  -DPART_$(PART) -DTARGET_IS_BLIZZARD_RA1 -Dgcc
+
 
 
 all: peripherals

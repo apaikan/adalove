@@ -4,16 +4,15 @@ with Interfaces.C;      use Interfaces.C;
 with LM4F.Gpio;         use LM4F.Gpio;
 with LM4F.Uart;
 with ARM.Uart;
-with ARM.Strings;       use ARM.Strings;
 
 with Interfaces;        use Interfaces;
 with Interfaces.C;      use Interfaces.C;
 with ARM.Strings;       use ARM.Strings;
 
-with MyCubController;   use MyCubController;
-with MyCubWorkingMemory; use MyCubWorkingMemory;
+with MyCub.Controller;   use MyCub.Controller;
+with MyCub.WorkingMemory; use MyCub.WorkingMemory;
 
-package body MyCubInterface is
+package body MyCub.BoardInterface is
 
     package Stdio is new ARM.Uart(Port => LM4F.Uart.UART3, IRQ => 75); -- 21 for UART0
 
@@ -78,9 +77,9 @@ package body MyCubInterface is
             
             -- start motor controllers
             Ret := StartController;            
-            --for I in 0..3 loop
-            --    Ret := SetPose(I, 8);
-            --end loop;
+            for I in 0..3 loop
+                Ret := SetPose(I, 8);
+            end loop;
 
         loop
             Stdio.Get_Line(Data, Last, Echo => False);
@@ -192,6 +191,13 @@ package body MyCubInterface is
                     Stdio.Put_Line("[error]"); 
                 end if;
             --
+            -- getHeading
+            --
+            elsif Commands(1).Str(1..Commands(1).Size) = "getHeading" then
+                Pos := getHeading;
+                Stdio.IntToStr(Pos, Data, Last); 
+                Stdio.Put_Line(Data(1 .. Last));
+            --
             -- getPose
             --
             elsif Commands(1).Str(1..Commands(1).Size) = "getPose" then
@@ -234,5 +240,5 @@ package body MyCubInterface is
       end loop;
   end BlinkyTask;
 
-end MyCubInterface;
+end MyCub.BoardInterface;
 

@@ -3,7 +3,7 @@ with Ada.Real_Time;     use Ada.Real_Time;
 with Interfaces.C;      use Interfaces.C;
 with LM4F.Gpio;         use LM4F.Gpio;
 
-package body MyCubController is
+package body MyCub.Controller is
     
     function SetPose(joint: Joint_ID; pos: Joint_POS) return Boolean
     is
@@ -203,5 +203,5 @@ package body MyCubController is
         end loop;
     end PositionController_Task3;
 
-end MyCubController;
+end MyCub.Controller;
 

@@ -5,7 +5,7 @@ with Interfaces.C;  use Interfaces.C;
 with ARM.Strings;   use ARM.Strings;
 with Ada.Unchecked_Conversion;
 
-package MyCubInterface is
+package MyCub.BoardInterface is
   
     type Specific_String is record
         Size : Unsigned_8;
@@ -23,15 +23,15 @@ package MyCubInterface is
                            Count: out Unsigned_8); 
     -- uart task
     task UartTask is
-        pragma Priority (130);
+        pragma Priority (UART_TASK_PRIO);
         pragma Storage_Size (2*1024);
     end UartTask;
 
     -- blinky
     task BlinkyTask is
-         pragma Priority (120);
+         pragma Priority (BLINKY_TASK_PRIO);
          pragma Storage_Size (2*1024);
     end BlinkyTask;
 
-end MyCubInterface;
+end MyCub.BoardInterface;
 

@@ -1,6 +1,6 @@
 with System;
 
-package MyCubController is
+package MyCub.Controller is
    
     subtype Joint_ID is Integer range 0..3;
     subtype Joint_POS is Integer range 0..180;
@@ -62,22 +62,22 @@ package MyCubController is
 
     -- tasks
     task PositionController_Task0 is
-        pragma Priority (123);
+        pragma Priority (CTRL0_TASK_PRIO);
         pragma Storage_Size (2*1024);
     end PositionController_Task0;
 
     task PositionController_Task1 is
-        pragma Priority (123);
+        pragma Priority (CTRL1_TASK_PRIO);
         pragma Storage_Size (2*1024);
     end PositionController_Task1;
 
     task PositionController_Task2 is
-        pragma Priority (123);
+        pragma Priority (CTRL2_TASK_PRIO);
         pragma Storage_Size (2*1024);
     end PositionController_Task2;
 
     task PositionController_Task3 is
-        pragma Priority (123);
+        pragma Priority (CTRL3_TASK_PRIO);
         pragma Storage_Size (2*1024);
     end PositionController_Task3;
 
@@ -95,6 +95,6 @@ private
        Container : Joint_Context;
     end Current_Poses;
 
-end MyCubController;
+end MyCub.Controller;
 
 

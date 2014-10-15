@@ -156,7 +156,7 @@ void init_board()
     // 
     // Enable I2C1
     //
-    //SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     GPIOPinTypeI2CSCL(GPIO_PORTA_BASE, GPIO_PIN_6);
     ROM_GPIOPinTypeI2C(GPIO_PORTA_BASE, GPIO_PIN_7);
     ROM_GPIOPinConfigure(GPIO_PA6_I2C1SCL);

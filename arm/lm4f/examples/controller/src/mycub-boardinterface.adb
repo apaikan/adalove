@@ -63,6 +63,7 @@ package body MyCub.BoardInterface is
         Count : Unsigned_8;
         Joint : Integer;
         Pos : Integer;
+        Orit : Orientation;
         Duration : Integer;
         Ret : Boolean;
       begin
@@ -193,10 +194,20 @@ package body MyCub.BoardInterface is
             --
             -- getHeading
             --
-            elsif Commands(1).Str(1..Commands(1).Size) = "getHeading" then
-                Pos := getHeading;
-                Stdio.IntToStr(Pos, Data, Last); 
-                Stdio.Put_Line(Data(1 .. Last));
+            elsif Commands(1).Str(1..Commands(1).Size) = "getOrientation" then
+                Orit := GetOrientation;
+                -- X
+                Stdio.IntToStr(Integer(Orit.X), Data, Last); 
+                Stdio.Put(Data(1 .. Last)); 
+                Stdio.Put(' ');
+                -- Y
+                Stdio.IntToStr(Integer(Orit.Y), Data, Last); 
+                Stdio.Put(Data(1 .. Last)); 
+                Stdio.Put(' ');
+                -- Z
+                Stdio.IntToStr(Integer(Orit.Z), Data, Last); 
+                Stdio.Put_Line(Data(1 .. Last)); 
+                
             --
             -- getPose
             --

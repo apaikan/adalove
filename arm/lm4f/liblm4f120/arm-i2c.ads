@@ -43,8 +43,9 @@ generic
 package ARM.I2C is
 
    --type I2CDevice is limited private;
-   type Byte     is mod 2**8;
-   type Byte_Ptr is access Byte;
+   --type Byte     is new unsigned_char;-- mod 2**8;
+   subtype Byte    is Unsigned_8;
+   type Byte_Ptr   is access Byte;
    type ByteVector is array (Integer range <>) of Byte;
 
     procedure SetAddress(Address : Integer; Register: Integer);

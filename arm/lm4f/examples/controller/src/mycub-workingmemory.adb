@@ -35,15 +35,15 @@ package body MyCub.WorkingMemory is
     end getDistance;
 
     --
-    -- GetHeading
+    -- GetOrientation
     --
-    function GetHeading return Integer 
+    function GetOrientation return Orientation 
     is
-        RawData : Float;
+        RawData : Orientation;
     begin
-        HeadingRaw.Get(RawData);
-        return Integer(RawData);
-    end GetHeading;
+        OrientationRaw.Get(RawData);
+        return RawData;
+    end GetOrientation;
 
     --
     -- protected BatteryRaw
@@ -76,19 +76,19 @@ package body MyCub.WorkingMemory is
     end DistanceRaw;
 
     --
-    -- protected HeadingRaw
+    -- protected OrientationRaw
     -- 
-    protected body HeadingRaw is
-        procedure Put(Data : Float) is
+    protected body OrientationRaw is
+        procedure Put(Data : Orientation) is
         begin
             Container := Data;
         end Put;
 
-        procedure Get(Data : out Float) is
+        procedure Get(Data : out Orientation) is
         begin
             Data := Container;
         end Get;
-    end HeadingRaw;
+    end OrientationRaw;
 
     --
     -- BatteryStatusUpdater task
@@ -179,19 +179,19 @@ package body MyCub.WorkingMemory is
     end SonarStatusUpdater;
 
     --
-    -- HeadingStatusUpdater task
+    -- OrientationStatusUpdater task
     --
-    task body HeadingStatusUpdater is
+    task body OrientationStatusUpdater is
         Period : constant Time_Span := Milliseconds(500);
         Activation : Time := Clock;
-        Value : Float := -1.0;
+        Value : Orientation := (X => 0.0, Y => 0.0, Z => 0.0);
         Ret : Boolean;
 
         HMC5883_ADDRESS_MAG            : constant := 2#0001_1110#;
         HMC5883_REGISTER_MAG_CRB_REG_M : constant := 16#01#;
         HMC5883_REGISTER_MAG_MR_REG_M  : constant := 16#02#;
         HMC5883_REGISTER_MAG_OUT_X_H_M : constant := 16#03#;            
-        HMC5883_MAGGAIN_1_3            : constant := 16#02#;
+        HMC5883_MAGGAIN_1_3            : constant := 16#20#;
         -- for Gain 1.3 the LSB is defined as below:
         GAUSS_LSB_XY                   : constant := 1100.0; 
         GAUSS_LSB_Z                    : constant := 980.0; 
@@ -224,10 +224,9 @@ package body MyCub.WorkingMemory is
         --
         -- ReadCompass
         --
-        procedure ReadCompass(Heading : out Float; Succeed : out Boolean) is
+        procedure ReadCompass(Orit : out Orientation; Succeed : out Boolean) is
             Data : I2C.ByteVector (1 .. 8); 
-            Len : Integer;
-            X, Y : Float;
+            Len : Integer;            
         begin
             I2C.SetAddress(HMC5883_ADDRESS_MAG, HMC5883_REGISTER_MAG_OUT_X_H_M);
             Len := 6;
@@ -237,33 +236,33 @@ package body MyCub.WorkingMemory is
                 return;
             end if;
             
-            X := Float( Integer(Data(1)) * 256 + Integer(Data(2)) );
-            Y := Float( Integer(Data(5)) * 256 + Integer(Data(6)) );
-            -- Z := Integer(Data(3)) * 256 + Integer(Data(4));
-            
-            X := X / GAUSS_LSB_XY * GAUSS_TO_MICROTESLA;
-            Y := Y / GAUSS_LSB_XY * GAUSS_TO_MICROTESLA;
-            
-            Heading := Atan2(Y, X);
+            Orit.X := Float( Combine(Data(2), Data(1)) );
+            Orit.Y := Float( Combine(Data(6), Data(5)) );
+            Orit.Z := Float( Combine(Data(4), Data(3)) );
 
-            -- Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
-            -- Find yours here: http://www.magnetic-declination.com/
-            -- Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
-            -- If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
-            Heading := Heading + 0.22;
+            Orit.X := Orit.X / GAUSS_LSB_XY * GAUSS_TO_MICROTESLA;
+            Orit.Y := Orit.Y / GAUSS_LSB_XY * GAUSS_TO_MICROTESLA;
+            Orit.Z := Orit.Z / GAUSS_LSB_Z * GAUSS_TO_MICROTESLA;
 
-            -- Correct for when signs are reversed.
-            if Heading < 0.0 then
-                Heading := Heading + 2.0 * M_PI;
-            end if;    
+           -- Heading := Atan2(Y, X);
+           -- -- Once you have your heading, you must then add your 'Declination Angle', which is the 'Error' of the magnetic field in your location.
+           -- -- Find yours here: http://www.magnetic-declination.com/
+           -- -- Mine is: -13* 2' W, which is ~13 Degrees, or (which we need) 0.22 radians
+           -- -- If you cannot find your Declination, comment out these two lines, your compass will be slightly off.
+           -- Heading := Heading + 0.22;
 
-            -- Check for wrap due to addition of declination.
-            if Heading > (2.0 * M_PI) then 
-                Heading := Heading - 2.0 * M_PI;
-            end if;
+           -- -- Correct for when signs are reversed.
+           -- if Heading < 0.0 then
+           --     Heading := Heading + 2.0 * M_PI;
+           -- end if;    
 
-            -- Convert radians to degrees for readability.
-            Heading := Heading * 180.0 / M_PI; 
+           -- -- Check for wrap due to addition of declination.
+           -- if Heading > (2.0 * M_PI) then 
+           --     Heading := Heading - 2.0 * M_PI;
+           -- end if;
+
+           -- -- Convert radians to degrees for readability.
+           -- Heading := Heading * 180.0 / M_PI; 
             Succeed := True;
         end;
 
@@ -275,12 +274,13 @@ package body MyCub.WorkingMemory is
             -- reading the compass value
             if Ret = True then 
                 ReadCompass(Value, Ret);
-                HeadingRaw.Put(Value);
+                OrientationRaw.Put(Value);
             else
-                HeadingRaw.Put(-1.0);
+                Value.X := 0.0; Value.Y := 0.0; Value.Z := 0.0;
+                OrientationRaw.Put(Value);
             end if;    
         end loop;
-    end HeadingStatusUpdater;
+    end OrientationStatusUpdater;
 
 end MyCub.WorkingMemory;
 

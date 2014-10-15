@@ -70,3 +70,8 @@ void uart_setup(void)
     ROM_IntEnable(INT_UART3);
 }
 
+int16_t combine(uint8_t lo, uint8_t hi)
+{
+    return (int16_t)(lo | ((int16_t)hi << 8));
+}
+

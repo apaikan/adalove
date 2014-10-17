@@ -201,21 +201,18 @@ package body MyCub.WorkingMemory is
         -- InitCompass
         --
         function InitCompass return Boolean is
-            Data : I2C.ByteVector (1 .. 2); 
         begin
             I2C.SetFrequency(400);
 
             -- Enable the magnetometer
             I2C.SetAddress(HMC5883_ADDRESS_MAG, HMC5883_REGISTER_MAG_MR_REG_M);
-            Data(1) := 0;
-            if I2C.Write(Data, 1) = False then
+            if I2C.Write(0) = False then
                 return False;
             end if;
             
             -- Set the gain to a known level
             I2C.SetAddress(HMC5883_ADDRESS_MAG, HMC5883_REGISTER_MAG_CRB_REG_M);
-            Data(1) :=  HMC5883_MAGGAIN_1_3;
-            if I2C.Write(Data, 1) = False then
+            if I2C.Write(HMC5883_MAGGAIN_1_3) = False then
                 return False;
             end if;
             return True;

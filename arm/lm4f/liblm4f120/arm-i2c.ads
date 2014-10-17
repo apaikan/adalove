@@ -51,6 +51,7 @@ package ARM.I2C is
     procedure SetAddress(Address : Integer; Register: Integer);
     procedure SetFrequency(Frequency: Integer);
     function Write(Data : ByteVector; Len : Integer) return Boolean;
+    function Write(Data : Byte) return Boolean;
     procedure Read(Data : out ByteVector; Len : in out Integer);
 
 private

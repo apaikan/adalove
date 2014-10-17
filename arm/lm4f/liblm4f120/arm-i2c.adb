@@ -28,7 +28,62 @@ package body ARM.I2C is
 
 
     --
-    -- Write
+    -- Write (Byte)
+    --
+    function Write(Data : Byte) return Boolean is
+    begin
+        -- Wait until master module is done transferring.
+        while MasterBusy(Base) /= 0 loop Null; end loop;
+
+        -- Tell the master module what address it will place on the bus when
+        -- writing to the slave.
+        MasterSlaveAddrSet(Base, Device.Address, 0);
+
+        -- Place the command to be sent in the data register.
+        MasterDataPut(Base, Device.Register);
+
+        -- Initiate send of data from the master.
+        MasterControl(Base, I2C_MASTER_CMD_BURST_SEND_START);
+
+        -- Wait until master module is done transferring.
+        while MasterBusy(Base) /= 0 loop Null; end loop;
+
+        -- Check for errors.
+        if MasterErr(Base) /= I2C_MASTER_ERR_NONE then
+            return False;
+        end if;
+
+        -- Place the value to be sent in the data register.
+        MasterDataPut(Base, Integer(Data));
+
+        -- Initiate send of data from the master.
+        MasterControl(Base, I2C_MASTER_CMD_BURST_SEND_CONT);
+
+        -- Wait until master module is done transferring.
+        while MasterBusy(Base) /= 0 loop Null; end loop;
+
+        -- Check for errors.
+        if MasterErr(Base) /= I2C_MASTER_ERR_NONE then
+            return False;
+        end if;
+        
+        --Initiate send of data from the master.        
+        MasterControl(Base, I2C_MASTER_CMD_BURST_SEND_FINISH);
+
+        -- Wait until master module is done transferring.
+        while MasterBusy(Base) /= 0 loop Null; end loop;
+
+        -- Check for errors.
+        if MasterErr(Base) /= I2C_MASTER_ERR_NONE then
+            return False;
+        end if;
+        
+        return True;
+    end;
+
+
+    --
+    -- Write (Buffer)
     --
     function Write(Data : ByteVector; Len : Integer) return Boolean is
         MasterOptionCommand : Long_Integer;

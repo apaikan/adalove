@@ -23,13 +23,13 @@ package MyCub.BoardInterface is
                            Count: out Unsigned_8); 
     -- uart task
     task UartTask is
-        pragma Priority (UART_TASK_PRIO);
+        pragma Priority (UartTaskParam.Priority);
         pragma Storage_Size (2*1024);
     end UartTask;
 
     -- blinky
     task BlinkyTask is
-         pragma Priority (BLINKY_TASK_PRIO);
+         pragma Priority (BlinkyTaskParam.Priority);
          pragma Storage_Size (2*1024);
     end BlinkyTask;
 

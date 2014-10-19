@@ -38,7 +38,7 @@ with Ada.Unchecked_Conversion;
 
 generic 
     Timer : Integer := 16#40034000#;
-    TickPerSec : Long_Integer := 85_000_000;
+    TickPerSec : Long_Integer := 80_000_000;
 
 package LM4F.HTimer is
 

@@ -94,7 +94,6 @@ package body MyCub.WorkingMemory is
     -- BatteryStatusUpdater task
     --
     task body BatteryStatusUpdater is
-        Period : constant Time_Span := Seconds(5);
         Activation : Time := Clock;
         Value : aliased Integer := 0;
         Ret : Integer := 0;
@@ -107,7 +106,7 @@ package body MyCub.WorkingMemory is
 
         loop
             delay until Activation;
-            Activation := Activation + Period;
+            Activation := Activation + BatTaskParam.Period;
             -- reading adc value
             ProcessorTrigger(ADC0_BASE, 3);
             --while IntStatus(ADC0_BASE, 3, 0) /= 0 loop 
@@ -123,7 +122,6 @@ package body MyCub.WorkingMemory is
     -- SonarStatusUpdater
     --
     task body SonarStatusUpdater is
-        Period : constant Time_Span := Milliseconds(500);
         Next_Time : Time := Clock;
         Value : Integer := 0;
         -- reading pulse width 
@@ -162,7 +160,7 @@ package body MyCub.WorkingMemory is
         PinTypeOutput(PORTA, PIN2);     -- Trig pin
         PinTypeInput(PORTA, PIN3);      -- Echo pin
         loop
-            Next_Time := Next_Time + Period;
+            Next_Time := Next_Time + SonarTaskParam.Period;
             delay until Next_Time; 
 
             -- trriging the sensor
@@ -182,7 +180,6 @@ package body MyCub.WorkingMemory is
     -- OrientationStatusUpdater task
     --
     task body OrientationStatusUpdater is
-        Period : constant Time_Span := Milliseconds(500);
         Activation : Time := Clock;
         Value : Orientation := (X => 0.0, Y => 0.0, Z => 0.0);
         Ret : Boolean;
@@ -267,7 +264,7 @@ package body MyCub.WorkingMemory is
         Ret := InitCompass; 
         loop
             delay until Activation;
-            Activation := Activation + Period;
+            Activation := Activation + CmpsTaskParam.Period;
             -- reading the compass value
             if Ret = True then 
                 ReadCompass(Value, Ret);

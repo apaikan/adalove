@@ -62,22 +62,22 @@ package MyCub.Controller is
 
     -- tasks
     task PositionController_Task0 is
-        pragma Priority (CTRL0_TASK_PRIO);
+        pragma Priority (Ctrl0TaskParam.Priority);
         pragma Storage_Size (2*1024);
     end PositionController_Task0;
 
     task PositionController_Task1 is
-        pragma Priority (CTRL1_TASK_PRIO);
+        pragma Priority (Ctrl1TaskParam.Priority);
         pragma Storage_Size (2*1024);
     end PositionController_Task1;
 
     task PositionController_Task2 is
-        pragma Priority (CTRL2_TASK_PRIO);
+        pragma Priority (Ctrl2TaskParam.Priority);
         pragma Storage_Size (2*1024);
     end PositionController_Task2;
 
     task PositionController_Task3 is
-        pragma Priority (CTRL3_TASK_PRIO);
+        pragma Priority (Ctrl3TaskParam.Priority);
         pragma Storage_Size (2*1024);
     end PositionController_Task3;
 

@@ -31,23 +31,39 @@
 -- OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -- 
 -------------------------------------------------------------------------
+with Ada.Real_Time;
 
 package MyCub is
 
+    package RT renames Ada.Real_Time;    
+    type TaskParameters is 
+    record 
+        Priority : Integer := 120;
+        Period   : RT.Time_Span := RT.Milliseconds(0); 
+    end record;
+
     -- board interface task priorities
-    BLINKY_TASK_PRIO : constant := 120;
-    UART_TASK_PRIO   : constant := 130;
+    BlinkyTaskParam : constant TaskParameters := (Priority => 120, 
+                                                  Period =>  RT.Seconds(3));
+    UartTaskParam   : constant TaskParameters := (Priority => 130, 
+                                                  Period => RT.Milliseconds(0));
 
     -- controller task priorities
-    CTRL0_TASK_PRIO  : constant := 125;
-    CTRL1_TASK_PRIO  : constant := 125;
-    CTRL2_TASK_PRIO  : constant := 125;
-    CTRL3_TASK_PRIO  : constant := 125;
+    Ctrl0TaskParam  : constant TaskParameters := (Priority => 125,
+                                                  Period => RT.Milliseconds(0));
+    Ctrl1TaskParam  : constant TaskParameters := (Priority => 125,
+                                                  Period => RT.Milliseconds(0));
+    Ctrl2TaskParam  : constant TaskParameters := (Priority => 125,
+                                                  Period => RT.Milliseconds(0));
+    Ctrl3TaskParam  : constant TaskParameters := (Priority => 125,
+                                                  Period => RT.Milliseconds(0));
 
     -- working memory task priorities
-    BAT_TASK_PRIO    : constant := 121;
-    CMPS_TASK_PRIO   : constant := 122;
-    SONAR_TASK_PRIO  : constant := 123;
-
+    BatTaskParam    : constant TaskParameters := (Priority => 121, 
+                                                  Period =>  RT.Seconds(10));
+    CmpsTaskParam   : constant TaskParameters := (Priority => 122, 
+                                                  Period =>  RT.Milliseconds(500));
+    SonarTaskParam  : constant TaskParameters := (Priority => 123, 
+                                                  Period =>  RT.Milliseconds(500));
 end MyCub;
 

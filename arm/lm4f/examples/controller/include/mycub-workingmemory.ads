@@ -36,17 +36,17 @@ package MyCub.WorkingMemory is
 
     -- tasks
     task BatteryStatusUpdater is
-        pragma Priority (BAT_TASK_PRIO);
+        pragma Priority (BatTaskParam.Priority);
         pragma Storage_Size (2*1024);
     end BatteryStatusUpdater;
 
     task OrientationStatusUpdater is
-        pragma Priority (CMPS_TASK_PRIO);
+        pragma Priority (CmpsTaskParam.Priority);
         pragma Storage_Size (2*1024);
     end OrientationStatusUpdater;
 
     task SonarStatusUpdater is
-        pragma Priority (SONAR_TASK_PRIO);
+        pragma Priority (SonarTaskParam.Priority);
         pragma Storage_Size (2*1024);
     end SonarStatusUpdater;
 

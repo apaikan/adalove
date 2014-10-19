@@ -235,13 +235,12 @@ package body MyCub.BoardInterface is
     -- Blinky Task body
     --
     task body BlinkyTask is        
-        Period : constant Time_Span := Seconds(3);
         Next_Time : Time := Clock;
     begin
         PinTypeOutput(PORTF, PIN3);
         loop
             -- wait for the next period
-            Next_Time := Next_Time + Period - Milliseconds(50);
+            Next_Time := Next_Time + BlinkyTaskParam.Period - Milliseconds(50);
             delay until Next_Time;            
             PinWrite(PORTF, PIN3, PIN3);
             -- wait for some ms then turn of leds

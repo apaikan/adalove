@@ -56,6 +56,7 @@ int servo_start(void)
         period1 &= 0xFFFF;
         ROM_TimerPrescaleSet(g_servo_timers[i], TIMER_A, extender1);
         ROM_TimerLoadSet(g_servo_timers[i], TIMER_A, period1);     
+        ROM_TimerEnable(g_servo_timers[i], TIMER_A);
     }
 
     return true;

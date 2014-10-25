@@ -178,7 +178,10 @@ package body MyCub.BoardInterface is
             -- getBatteryCurrent
             --
             elsif Commands(1).Str(1..Commands(1).Size) = "getBatteryCurrent" then
-                Stdio.Put_Line("0.0"); 
+                Pos := GetBatteryCurrent;
+                Stdio.IntToStr(Pos, Data, Last); 
+                Stdio.Put_Line(Data(1 .. Last));
+
             --
             -- getDistance
             --

@@ -8,16 +8,22 @@ package MyCub.WorkingMemory is
         Y : Float;
         Z : Float;
     end record;
+    
+    type BatteryStatus is record
+        Voltage: Integer;
+        Current: Integer;
+    end record;
 
     function GetBatteryVolt return Integer; 
+    function GetBatteryCurrent return Integer; 
     function GetDistance return Integer; 
     function GetOrientation return Orientation;
 
     protected BatteryRaw is
-        procedure Put (Data : Integer);
-        procedure Get (Data : out Integer);
+        procedure Put (Data : BatteryStatus);
+        procedure Get (Data : out BatteryStatus);
     private
-        Container : Integer;
+        Container : BatteryStatus;
     end BatteryRaw;
 
     protected DistanceRaw is

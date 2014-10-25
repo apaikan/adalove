@@ -17,11 +17,22 @@ package body MyCub.WorkingMemory is
     --
     function GetBatteryVolt return Integer
     is
-        RawData : Integer;
+        RawData : BatteryStatus;
     begin
         BatteryRaw.Get(RawData);
-        return Integer(Float(RawData) * 0.805860806 * 11.0);
+        return Integer(Float(RawData.Voltage) * 0.805860806 * 11.0);
     end GetBatteryVolt;
+
+    --
+    -- getBatteryCurrent
+    --
+    function GetBatteryCurrent return Integer
+    is
+        RawData : BatteryStatus;
+    begin
+        BatteryRaw.Get(RawData);
+        return Integer(Float(RawData.Current));
+    end GetBatteryCurrent;
 
     --
     --  GetDistance 
@@ -49,12 +60,12 @@ package body MyCub.WorkingMemory is
     -- protected BatteryRaw
     -- 
     protected body BatteryRaw is
-        procedure Put(Data : Integer) is
+        procedure Put(Data : BatteryStatus) is
         begin
             Container := Data;
         end Put;
 
-        procedure Get(Data : out Integer) is
+        procedure Get(Data : out BatteryStatus) is
         begin
             Data := Container;
         end Get;
@@ -96,25 +107,39 @@ package body MyCub.WorkingMemory is
     task body BatteryStatusUpdater is
         Activation : Time := Clock;
         Value : aliased Integer := 0;
+        Status : BatteryStatus;
         Ret : Integer := 0;
     begin
-        -- configure adc
-        SequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
-        SequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH6 + ADC_CTL_IE + ADC_CTL_END);
-        SequenceEnable(ADC0_BASE, 3);
-        IntClear(ADC0_BASE, 3);
-
         loop
             delay until Activation;
             Activation := Activation + BatTaskParam.Period;
-            -- reading adc value
+
+            -- reading adc value channel 6 for battery voltage
+            SequenceDisable(ADC0_BASE, 3);
+            SequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
+            SequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH6 + ADC_CTL_IE + ADC_CTL_END);
+            SequenceEnable(ADC0_BASE, 3);
+            IntClear(ADC0_BASE, 3);           
             ProcessorTrigger(ADC0_BASE, 3);
-            --while IntStatus(ADC0_BASE, 3, 0) /= 0 loop 
-            --    null;
-            --end loop;
+            -- while IntStatus(ADC0_BASE, 3, 0) /= 0 loop null; end loop;
             IntClear(ADC0_BASE, 3);
             Ret := SequenceDataGet(ADC0_BASE, 3, Value'Access);
-            BatteryRaw.Put(Value);
+            Status.Voltage := Value;
+
+            -- reading adc value channel 5 for battery current
+            SequenceDisable(ADC0_BASE, 3);
+            SequenceConfigure(ADC0_BASE, 3, ADC_TRIGGER_PROCESSOR, 0);
+            SequenceStepConfigure(ADC0_BASE, 3, 0, ADC_CTL_CH5 + ADC_CTL_IE + ADC_CTL_END);
+            SequenceEnable(ADC0_BASE, 3);
+            IntClear(ADC0_BASE, 3);           
+            ProcessorTrigger(ADC0_BASE, 3);
+            -- while IntStatus(ADC0_BASE, 3, 0) /= 0 loop null; end loop;
+            IntClear(ADC0_BASE, 3);
+            Ret := SequenceDataGet(ADC0_BASE, 3, Value'Access);
+            Status.Current := Value;
+
+            -- update Status
+            BatteryRaw.Put(Status);
         end loop;
     end BatteryStatusUpdater;
 
